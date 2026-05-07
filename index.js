@@ -1,0 +1,46 @@
+const express = require('express');
+const cors = require('cors'); // 1. IMPORTAR CORS
+const db = require('./src/database/db');
+const visitanteRoutes = require('./src/routes/visitanteRoutes');
+const visitaRoutes = require('./src/routes/visitaRoutes');
+const authRoutes = require('./src/routes/authRoutes'); // 2. IMPORTAR RUTAS DE LOGIN
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// MIDDLEWARES
+app.use(cors()); // 3. ACTIVAR CORS (Vital para que React se conecte)
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// RUTAS
+app.use('/api/visitantes', visitanteRoutes);
+app.use('/api/visitas', visitaRoutes);
+app.use('/api/auth', authRoutes); // 4. VINCULAR RUTAS DE AUTENTICACIÓN
+
+// Ruta de prueba inicial
+app.get('/', (req, res) => {
+    res.send('Servidor de la Clínica Meta funcionando correctamente 🏥');
+});
+
+// Ruta para verificar la base de datos
+app.get('/test-db', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT 1 + 1 AS result');
+        res.json({
+            status: 'Conectado',
+            message: 'La base de datos respondió correctamente',
+            data: rows
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'Error',
+            message: 'No se pudo conectar a la base de datos',
+            error: error.message
+        });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en: http://localhost:${PORT}`);
+});
