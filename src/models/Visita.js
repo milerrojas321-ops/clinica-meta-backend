@@ -3,25 +3,51 @@ const db = require('../database/db');
 const Visita = {
     // Aquí movemos la consulta del INSERT
     registrarEntrada: async (datos) => {
-        const { id_visitante, id_usuario, nombre_paciente, area_destino } = datos;
-        const query = `
-            INSERT INTO visitas (id_visitante, id_usuario, nombre_paciente, area_destino, fecha_entrada)
-            VALUES (?, ?, ?, ?, NOW())
-        `;
-        const [result] = await db.query(query, [id_visitante, id_usuario, nombre_paciente, area_destino]);
-        return result.insertId;
-    },
+        const sql = `
+        INSERT INTO visitas (id_visitante, id_usuario, nombre_paciente, area_destino, foto_perfil_url, fecha_entrada)
+        VALUES (?, ?, ?, ?, ?, NOW())
+    `;
+    
+    // Pasamos los 5 valores en el orden exacto de los '?'
+    const [result] = await db.query(sql, [
+        datos.id_visitante,
+        datos.id_usuario,
+        datos.nombre_paciente,
+        datos.area_destino,
+        datos.foto_perfil_url // El string base64 de la foto
+    ]);
+    return result;
+},
+
+registrarSalida: async (id_visita) => {
+    const sql = `
+        UPDATE visitas 
+        SET fecha_salida = NOW() 
+        WHERE id_visita = ? AND fecha_salida IS NULL
+    `;
+    const [result] = await db.query(sql, [id_visita]);
+    return result;
+},
 
     // Aquí movemos la consulta del SELECT con el JOIN
+    // src/models/Visita.js
     obtenerHistorialCompleto: async () => {
-        const query = `
-            SELECT  v.id_visita, vi.nombres, vi.apellidos, v.nombre_paciente, 
-                    v.area_destino, v.fecha_entrada
+        const sql = `
+            SELECT 
+                v.id_visita,
+                vt.nombres,
+                vt.apellidos,
+                vt.numero_documento,
+                v.nombre_paciente,
+                v.area_destino,
+                v.foto_perfil_url, -- Asegúrate de incluir esta columna
+                v.fecha_entrada,
+                v.fecha_salida
             FROM visitas v
-            JOIN visitantes vi ON v.id_visitante = vi.id_visitante
+            JOIN visitantes vt ON v.id_visitante = vt.id_visitante
             ORDER BY v.fecha_entrada DESC
         `;
-        const [rows] = await db.query(query);
+        const [rows] = await db.query(sql);
         return rows;
     }
 };

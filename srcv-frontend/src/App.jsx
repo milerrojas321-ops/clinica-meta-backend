@@ -5,6 +5,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import MenuPrincipal from './pages/MenuPrincipal';
 import RegistroIngreso from './pages/RegistroIngreso';
+import HistorialVisitas from './pages/HistorialVisitas';
+import GestionVisitantes from './pages/GestionVisitantes';
+import RegistroUsuarios from './pages/RegistroUsuarios';
 
 function App() {
   return (
@@ -20,9 +23,9 @@ function App() {
         <Route path="/registro-ingreso" element={<RegistroIngreso />} />
         
         {/* Otras rutas que definiste en el menú */}
-        <Route path="/historial-visitas" element={<div>Próximamente...</div>} />
-        <Route path="/visitantes" element={<div>Próximamente...</div>} />
-        <Route path="/registro-usuarios" element={<div>Próximamente...</div>} />
+        <Route path="/historial-visitas" element={<HistorialVisitas />} />
+        <Route path="/visitantes" element={<GestionVisitantes />} />
+        <Route path="/registro-usuarios" element={<RegistroUsuarios />} />
       </Routes>
     </Router>
   );

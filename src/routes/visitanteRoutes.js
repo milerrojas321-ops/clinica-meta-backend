@@ -10,4 +10,6 @@ router.get('/buscar/:cedula', visitanteController.buscarPorCedula);
 // Definimos la ruta GET para ver la lista
 router.get('/lista', visitanteController.obtenerVisitantes);
 
+router.get('/', visitanteController.obtenerVisitantes);
+
 module.exports = router;

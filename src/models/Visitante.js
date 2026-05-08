@@ -35,7 +35,23 @@ const Visitante = {
         }
         
         return result.insertId;
-    }
+    },
+
+    obtenerTodos: async () => {
+    // Concatenamos nombres y apellidos para que coincida con el frontend
+    const sql = `
+        SELECT 
+            id_visitante as id, 
+            CONCAT(nombres, ' ', apellidos) as nombre_completo, 
+            tipo_documento, 
+            numero_documento, 
+            telefono, 
+            foto_perfil_url as foto 
+        FROM visitantes
+    `;
+    const [rows] = await db.query(sql);
+    return rows;
+}
 };
 
 module.exports = Visitante;

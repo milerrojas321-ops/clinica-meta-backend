@@ -1,125 +1,149 @@
 import React, { useState, useRef, useCallback } from 'react';
 import axios from 'axios';
 import Webcam from 'react-webcam';
+import { Camera, UserCheck, CreditCard, Phone, User, MapPin, RefreshCw, Scan } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import './RegistroIngreso.css';
 
 const RegistroIngreso = () => {
-  const [datosEscaner, setDatosEscaner] = useState({
-    stringCapturado: '',
+  const [formData, setFormData] = useState({
     nombres: '',
     apellidos: '',
-    numero_documento: '' // Cambiado de cedula a numero_documento
-  });
-
-  const [datosManuales, setDatosManuales] = useState({
+    numero_documento: '',
     telefono: '',
-    nombre_paciente: '', // Ajustado a la DB
-    area_destino: 'UCI'   // Ajustado a la DB
+    nombre_paciente: '',
+    area_destino: 'UCI',
+    stringCapturado: ''
   });
 
-  const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
+  const webcamRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const capturarFoto = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
   }, [webcamRef]);
 
-  const reintentarFoto = () => setImgSrc(null);
-
-  const manejarEscaneo = (e) => {
-    const stringRaw = e.target.value;
-    if (stringRaw.length > 50) {
-        setDatosEscaner({
-            stringCapturado: stringRaw,
-            nombres: 'JUAN CARLOS',
-            apellidos: 'PEREZ',
-            numero_documento: '12345678'
-        });
-    } else {
-        setDatosEscaner({...datosEscaner, stringCapturado: stringRaw});
-    }
-  };
-
-  const manejarCambioManual = (e) => {
-    setDatosManuales({ ...datosManuales, [e.target.name]: e.target.value });
-  };
-
-  const confirmarRegistro = async () => {
-    if (!imgSrc) {
-      alert("Por favor, toma la foto del visitante antes de continuar.");
-      return;
-    }
-
-    const datosFinales = {
-      ...datosEscaner,
-      ...datosManuales,
-      foto_perfil_url: imgSrc // Nombre exacto de la columna en la DB
-    };
-
-    try {
-      // Importante: id_usuario debe existir en tu tabla usuarios (usamos 1 por defecto)
-      const respuesta = await axios.post('http://localhost:3000/api/visitas/ingreso', {
-        ...datosFinales,
-        id_usuario: 1 
-      });
-      alert('¡Ingreso exitoso en Clínica Meta!');
-      setImgSrc(null);
-      setDatosEscaner({ stringCapturado: '', nombres: '', apellidos: '', numero_documento: '' });
-    } catch (error) {
-      console.error(error);
-      alert('Error al registrar la visita: ' + (error.response?.data?.details || 'Error interno'));
-    }
-  };
-
   const simularEscaneo = () => {
-    const nombresFicticios = ["MILLER STIVEN", "DANILO", "MARIA PAULA", "CARLOS ANDRES"];
-    const azar = Math.floor(Math.random() * nombresFicticios.length);
-    setDatosEscaner({
-        stringCapturado: "PubDSK_SIMULADO_DATA_PDF417_CLINICA_META_2026",
-        nombres: nombresFicticios[azar],
-        apellidos: "GONZALEZ",
-        numero_documento: Math.floor(Math.random() * 1000000000).toString()
+    setFormData({
+      ...formData,
+      nombres: "MILLER STIVEN",
+      apellidos: "GARCIA",
+      numero_documento: "1121900000",
+      stringCapturado: "DATA_PDF417_SIMULADO_CLINICA_META"
     });
   };
 
+  const confirmarRegistro = async () => {
+    if (!imgSrc) return alert("La fotografía es obligatoria.");
+    try {
+      await axios.post('http://localhost:3000/api/visitas/ingreso', {
+        ...formData,
+        foto_perfil_url: imgSrc,
+        id_usuario: 1 
+      });
+      alert('Registro completado exitosamente.');
+      navigate('/inicio');
+    } catch (error) {
+      alert('Error en el servidor. Verifique los datos.');
+    }
+  };
+
   return (
-    <div className="contenedor-principal">
-      <h1>CLÍNICA META - Registro de Visitas</h1>
-      <div className="panel-flexible">
-        <div className="panel-escaner">
-          <h2>PASO 1: ESCANEO</h2>
-          <button onClick={simularEscaneo} className="btn-simular">⚡ SIMULAR ESCANEO</button>
-          <textarea value={datosEscaner.stringCapturado} onChange={manejarEscaneo} placeholder="Escanee la cédula..." />
-          <div className="campos-autocompletados">
-            <input type="text" value={datosEscaner.nombres} readOnly placeholder="Nombres" />
-            <input type="text" value={datosEscaner.numero_documento} readOnly placeholder="Documento" />
+    <div className="ingreso-container">
+      <div className="ingreso-card">
+        <header className="ingreso-header">
+          <div className="title-group">
+            <h1>Registro de Visitante</h1>
+            <p>Complete la información para autorizar el acceso</p>
           </div>
+          <button onClick={simularEscaneo} className="btn-scan-sim">
+            <Scan size={18} /> Simular Escaneo
+          </button>
+        </header>
+
+        <div className="ingreso-grid">
+          {/* Columna Izquierda: Formulario */}
+          <section className="form-section">
+            <div className="input-group">
+              <label><CreditCard size={16} /> Identificación (Editable)</label>
+              <input 
+                name="numero_documento" 
+                value={formData.numero_documento} 
+                onChange={handleInputChange} 
+                placeholder="Número de cédula"
+              />
+            </div>
+
+            <div className="input-row">
+              <div className="input-group">
+                <label><User size={16} /> Nombres</label>
+                <input name="nombres" value={formData.nombres} onChange={handleInputChange} placeholder="Nombres" />
+              </div>
+              <div className="input-group">
+                <label>Apellidos</label>
+                <input name="apellidos" value={formData.apellidos} onChange={handleInputChange} placeholder="Apellidos" />
+              </div>
+            </div>
+
+            <div className="input-row">
+              <div className="input-group">
+                <label><Phone size={16} /> Teléfono de Contacto</label>
+                <input name="telefono" onChange={handleInputChange} placeholder="Ej: 310..." />
+              </div>
+              <div className="input-group">
+                <label><MapPin size={16} /> Área de Destino</label>
+                <select name="area_destino" onChange={handleInputChange}>
+                  <option value="UCI">Unidad de Cuidados Intensivos (UCI)</option>
+                  <option value="Piso 4">Hospitalización - Piso 4</option>
+                  <option value="Urgencias">Urgencias</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="input-group">
+              <label><UserCheck size={16} /> Paciente a Visitar</label>
+              <input name="nombre_paciente" onChange={handleInputChange} placeholder="Nombre completo del paciente" />
+            </div>
+          </section>
+
+          {/* Columna Derecha: Cámara */}
+          <section className="camera-section">
+            <label className="label-center"><Camera size={16} /> Registro Fotográfico</label>
+            <div className="camera-wrapper">
+              {!imgSrc ? (
+                <Webcam 
+                  audio={false} 
+                  ref={webcamRef} 
+                  screenshotFormat="image/jpeg" 
+                  className="webcam-pro"
+                />
+              ) : (
+                <img src={imgSrc} alt="Preview" className="photo-preview" />
+              )}
+              
+              {!imgSrc ? (
+                <button onClick={capturarFoto} className="btn-capture">Capturar Foto</button>
+              ) : (
+                <button onClick={() => setImgSrc(null)} className="btn-retake">
+                  <RefreshCw size={16} /> Tomar otra
+                </button>
+              )}
+            </div>
+          </section>
         </div>
 
-        <div className="panel-manual">
-          <h2>PASO 2: DATOS</h2>
-          <input type="text" name="telefono" placeholder="Teléfono" onChange={manejarCambioManual} />
-          <input type="text" name="nombre_paciente" placeholder="Nombre Paciente" onChange={manejarCambioManual} />
-          <select name="area_destino" onChange={manejarCambioManual}>
-            <option value="UCI">UCI</option>
-            <option value="Piso 4">Piso 4</option>
-          </select>
-        </div>
-
-        <div className="panel-foto">
-          <h2>PASO 3: FOTO</h2>
-          <div className="visor-camara">
-            {!imgSrc ? (
-              <><Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" className="webcam-view" />
-                <button onClick={capturarFoto} className="btn-foto">CAPTURAR</button></>
-            ) : (
-              <><img src={imgSrc} alt="Visitante" className="foto-previa" />
-                <button onClick={reintentarFoto} className="btn-reintentar">TOMAR OTRA</button></>
-            )}
-          </div>
-          <button onClick={confirmarRegistro} className="btn-confirmar">CONFIRMAR TODO</button>
-        </div>
+        <footer className="ingreso-footer">
+          <button className="btn-cancel" onClick={() => navigate('/inicio')}>Cancelar</button>
+          <button className="btn-confirm" onClick={confirmarRegistro}>
+            <UserCheck size={20} /> Finalizar Registro
+          </button>
+        </footer>
       </div>
     </div>
   );
