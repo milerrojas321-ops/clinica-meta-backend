@@ -10,39 +10,58 @@ const MenuPrincipal = ({ user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
+  console.log("Datos del objeto user:", user);
+  console.log("Rol detectado:", user?.rol);
+
   // Nombre del usuario que viene de la sesión
   const userName = user?.nombre || "Usuario";
 
-  const opcionesMenu = [
-    {
-      titulo: 'Registrar Visita',
-      descripcion: 'Escaneo de cédula y toma de fotografía para nuevos ingresos.',
-      icono: <UserPlus size={35} />,
-      ruta: '/registro-ingreso',
-      color: '#2ecc71'
-    },
-    {
-      titulo: 'Historial de Visitas',
-      descripcion: 'Consulta quién ha entrado y salido de la clínica.',
-      icono: <ClipboardList size={35} />,
-      ruta: '/historial-visitas',
-      color: '#3498db'
-    },
-    {
-      titulo: 'Historial de Visitantes',
-      descripcion: 'Base de datos maestra de personas registradas.',
-      icono: <Users size={35} />,
-      ruta: '/visitantes',
-      color: '#9b59b6'
-    },
-    {
-      titulo: 'Registrar Usuarios',
-      descripcion: 'Crear nuevas cuentas para recepcionistas o administradores.',
-      icono: <UserCog size={35} />,
-      ruta: '/registro-usuarios',
-      color: '#e67e22'
-    }
-  ];
+  // 1. Primero definimos TODAS las opciones posibles
+const opcionesMenu = [
+  {
+    titulo: 'Registrar Visita',
+    descripcion: 'Escaneo de cédula y toma de fotografía para nuevos ingresos.',
+    icono: <UserPlus size={35} />,
+    ruta: '/registro-ingreso',
+    color: '#2ecc71'
+  },
+  {
+    titulo: 'Historial de Visitas',
+    descripcion: 'Consulta quién ha entrado y salido de la clínica.',
+    icono: <ClipboardList size={35} />,
+    ruta: '/historial-visitas',
+    color: '#3498db'
+  },
+  {
+    titulo: 'Historial de Visitantes',
+    descripcion: 'Base de datos maestra de personas registradas.',
+    icono: <Users size={35} />,
+    ruta: '/visitantes',
+    color: '#9b59b6'
+  },
+  {
+    titulo: 'Registrar Usuarios',
+    descripcion: 'Crear nuevas cuentas para recepcionistas o administradores.',
+    icono: <UserCog size={35} />,
+    ruta: '/registro-usuarios',
+    color: '#e67e22'
+  }
+];
+
+const handleLogout = () => {
+  // Limpia los datos guardados en el navegador
+  localStorage.removeItem('usuarioClinica');
+  
+  // Fuerza una recarga hacia la página de login
+  window.location.href = '/'; 
+};
+
+const opcionesPermitidas = opcionesMenu.filter(opcion => {
+  if (opcion.ruta === '/registro-usuarios') {
+    return user?.rol?.toLowerCase().trim() === 'administrador';
+  }
+  return true;
+});
 
   return (
     <div className="dashboard-layout">
@@ -79,7 +98,7 @@ const MenuPrincipal = ({ user }) => {
             <button onClick={() => navigate('/configuracion')}><Settings size={18} /> Configuración</button>
             <button onClick={() => navigate('/perfil')}><UserIcon size={18} /> Mi Perfil</button>
           </div>
-          <button className="btn-logout-sidebar" onClick={() => navigate('/')}>
+          <button className="btn-logout-sidebar" onClick={handleLogout}>
             <LogOut size={18} /> Cerrar Sesión
           </button>
         </div>
@@ -93,7 +112,7 @@ const MenuPrincipal = ({ user }) => {
         </div>
 
         <div className="menu-grid">
-          {opcionesMenu.map((opcion, index) => (
+          {opcionesPermitidas.map((opcion, index) => (
             <div 
               key={index} 
               className="menu-card" 
@@ -113,7 +132,7 @@ const MenuPrincipal = ({ user }) => {
       </main>
 
       <footer className="menu-footer">
-        <p>© 2026 Clínica Meta - Sistema de Gestión de Seguridad</p>
+        <p>© 2026 Clínica Meta - Sistema de Gestión de visitas</p>
       </footer>
     </div>
   );

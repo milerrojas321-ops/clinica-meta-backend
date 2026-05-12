@@ -4,17 +4,25 @@ const Visita = require('../models/Visita');
 
 const visitaController = {
     // src/controllers/visitaController.js
+// src/controllers/visitaController.js
 registrarVisita: async (req, res) => {
     try {
-        const idVisitante = await Visitante.crearOActualizar(req.body);
+        // Unificamos la foto que viene del frontend
+        const fotoARegistrar = req.body.foto || req.body.foto_perfil_url;
 
+        // 1. Esto actualiza la foto en la tabla 'visitantes'
+        const idVisitante = await Visitante.crearOActualizar({
+            ...req.body,
+            foto: fotoARegistrar // Nos aseguramos de pasar la foto unificada
+        });
+
+        // 2. Esto guarda la foto en la tabla 'visitas'
         await Visita.registrarEntrada({
             id_visitante: idVisitante,
             id_usuario: 1, 
-
             nombre_paciente: req.body.nombre_paciente, 
             area_destino: req.body.area_destino,
-            foto_perfil_url: req.body.foto_perfil_url
+            foto_perfil_url: fotoARegistrar // <--- IMPORTANTE: Usar la foto unificada
         });
 
         res.status(201).json({ success: true, message: 'Ingreso registrado' });

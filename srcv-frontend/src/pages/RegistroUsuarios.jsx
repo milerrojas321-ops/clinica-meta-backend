@@ -91,7 +91,7 @@ const RegistroUsuarios = () => {
           <div className="input-field">
             <label><ShieldCheck size={16} /> Rol en el Sistema</label>
             <select name="rol" onChange={handleChange} className="select-modern">
-              <option value="recepcionista">Recepcionista (Solo registros)</option>
+              <option value="recepcionista">Recepcionista (control limitado)</option>
               <option value="administrador">Administrador (Control total)</option>
             </select>
           </div>

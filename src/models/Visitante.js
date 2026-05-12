@@ -1,41 +1,39 @@
 const db = require('../database/db');
 
 const Visitante = {
-    crearOActualizar: async (datos) => {
-        // Extraemos 'cedula' (del frontend) o 'numero_documento'
-        const { nombres, apellidos, cedula, numero_documento, telefono, foto } = datos;
-        
-        // Usamos el que venga con datos
-        const docReal = cedula || numero_documento;
+    // src/models/Visitante.js
+crearOActualizar: async (datos) => {
+    const { nombres, apellidos, cedula, numero_documento, telefono, foto, foto_perfil_url } = datos;
+    
+    // Unificamos el documento y la foto independientemente de cómo vengan del front o controller
+    const docReal = cedula || numero_documento;
+    const fotoReal = foto || foto_perfil_url; 
 
-        // 3. Definimos la consulta SQL usando los nombres REALES de tu tabla en phpMyAdmin
-        const query = `
-            INSERT INTO visitantes (tipo_documento, numero_documento, nombres, apellidos, telefono, foto_perfil_url)
-            VALUES (?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE 
-                telefono = VALUES(telefono),
-                foto_perfil_url = VALUES(foto_perfil_url)
-        `;
+    const query = `
+        INSERT INTO visitantes (tipo_documento, numero_documento, nombres, apellidos, telefono, foto_perfil_url)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE 
+            telefono = VALUES(telefono),
+            foto_perfil_url = VALUES(foto_perfil_url) -- Aquí se actualiza la foto en el perfil maestro
+    `;
 
-        // 4. Ejecutamos la consulta. 
-        // Pasamos 'cedula' a la columna 'numero_documento' (segunda posición)
-        const [result] = await db.query(query, [
-            'CC', 
-            docReal, 
-            nombres, 
-            apellidos, 
-            telefono, 
-            foto // La imagen que viene de la cámara
-        ]);
+    const [result] = await db.query(query, [
+        'CC', 
+        docReal, 
+        nombres, 
+        apellidos, 
+        telefono, 
+        fotoReal 
+    ]);
 
-        // 5. Retornamos el ID para que el controlador lo use en la tabla 'visitas'
-        if (result.insertId === 0) {
-            const [rows] = await db.query('SELECT id_visitante FROM visitantes WHERE numero_documento = ?', [docReal]);
-            return rows[0].id_visitante;
-        }
-        
-        return result.insertId;
-    },
+    // Retornamos el id_visitante para que la tabla 'visitas' pueda crear la relación
+    if (result.insertId === 0) {
+        const [rows] = await db.query('SELECT id_visitante FROM visitantes WHERE numero_documento = ?', [docReal]);
+        return rows[0].id_visitante;
+    }
+    
+    return result.insertId;
+},
 
     obtenerTodos: async () => {
     // Concatenamos nombres y apellidos para que coincida con el frontend

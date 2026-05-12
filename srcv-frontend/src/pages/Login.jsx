@@ -8,26 +8,27 @@ const Login = ({ onLoginSuccess }) => {
   const [error, setError] = useState('');
   const navigate = useNavigate(); // Inicializamos el navegador
 
+
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
+  e.preventDefault();
+  setError('');
 
-    try {
-      // URL correcta hacia tu puerto 3000
-      const res = await axios.post('http://localhost:3000/api/auth/login', credentials);
+  try {
+    const res = await axios.post('http://localhost:3000/api/auth/login', credentials);
+    
+    if (res.data.success) {
+      // ESTA ES LA LÍNEA NUEVA: Guardamos el objeto user (id, nombre, rol)
+      localStorage.setItem('usuarioClinica', JSON.stringify(res.data.user));
       
-      if (res.data.success) {
-        // 1. Guardamos los datos del usuario si es necesario
-        if (onLoginSuccess) onLoginSuccess(res.data.user);
-        
-        // 2. ¡REDIRECCIÓN! Esto te lleva al menú principal
-        navigate('/inicio'); 
-      }
-    } catch (err) {
+      if (onLoginSuccess) onLoginSuccess(res.data.user);
+      
+      navigate('/inicio'); 
+    }
+  } catch (err) {
       if (err.response) {
         setError(err.response.data.mensaje || 'Error al conectar con el servidor');
       } else {
