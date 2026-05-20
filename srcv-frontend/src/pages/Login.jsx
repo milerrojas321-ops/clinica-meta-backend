@@ -21,7 +21,7 @@ const Login = ({ onLoginSuccess }) => {
     const res = await axios.post('http://localhost:3000/api/auth/login', credentials);
     
     if (res.data.success) {
-      // ESTA ES LA LÍNEA NUEVA: Guardamos el objeto user (id, nombre, rol)
+      localStorage.setItem('tokenClinica', res.data.token); // Guardamos la llave
       localStorage.setItem('usuarioClinica', JSON.stringify(res.data.user));
       
       if (onLoginSuccess) onLoginSuccess(res.data.user);

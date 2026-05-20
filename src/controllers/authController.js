@@ -1,5 +1,6 @@
 // controllers/authController.js
 const db = require('../database/db');
+const jwt = require('jsonwebtoken');
 
 const authController = {
     login: async (req, res) => {
@@ -7,16 +8,31 @@ const authController = {
         const query = 'SELECT * FROM usuarios WHERE username = ? AND password = ?';
         
         try {
-            // Usamos await porque tu db.js usa promesas
             const [result] = await db.query(query, [usuario, password]);
 
             if (result.length > 0) {
-                const user = { 
+                // 1. Definir los datos del usuario
+                const userPayload = { 
                     id: result[0].id, 
                     nombre: result[0].nombre_completo,
                     rol: result[0].rol 
                 };
-                res.json({ success: true, user });
+
+                // 2. GENERAR EL TOKEN (Esto te faltaba dentro de la función)
+                const token = jwt.sign(
+                    userPayload, 
+                    'TU_PALABRA_SECRETA_SUPER_SEGURA', 
+                    { expiresIn: '1h' }
+                );
+
+                // 3. ENVIAR TODO AL FRONTEND
+                // Asegúrate de enviar 'token' para que Login.jsx lo reciba
+                res.json({ 
+                    success: true, 
+                    user: userPayload,
+                    token: token 
+                });
+
             } else {
                 res.status(401).json({ success: false, mensaje: 'Credenciales inválidas' });
             }

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import Webcam from 'react-webcam';
 import { Camera, UserCheck, CreditCard, Phone, User, MapPin, RefreshCw, Scan } from 'lucide-react';
@@ -16,9 +16,99 @@ const RegistroIngreso = () => {
     stringCapturado: ''
   });
 
+  const [areasDisponibles, setAreasDisponibles] = useState([]);
+
   const [imgSrc, setImgSrc] = useState(null);
   const webcamRef = useRef(null);
   const navigate = useNavigate();
+  const [sesionValida, setSesionValida] = useState(true);
+
+  const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData({
+    ...formData,
+    [name]: value
+  });
+};
+
+useEffect(() => {
+  const cargarAreas = async () => {
+    try {
+      const respuesta = await axios.get('http://localhost:3000/api/config/areas');
+      setAreasDisponibles(respuesta.data);
+    } catch (error) {
+      console.error("Error al obtener áreas:", error);
+      // Opcional: puedes poner áreas por defecto si el servidor falla
+      setAreasDisponibles([{ id: 1, nombre: 'UCI' }, { id: 2, nombre: 'Urgencias' }]);
+    }
+  };
+
+  cargarAreas();
+}, []);
+
+
+  useEffect(() => {
+    const verificarSesion = () => {
+      const token = localStorage.getItem('tokenClinica');
+      if (!token || token === 'undefined') {
+        setSesionValida(false);
+      }
+    };
+
+    // Verificamos al montar el componente
+    verificarSesion();
+
+    // Opcional: Verificar cada vez que el usuario hace clic o escribe
+    window.addEventListener('click', verificarSesion);
+    return () => window.removeEventListener('click', verificarSesion);
+  }, []);
+  
+  // Si el token no existe o es el texto "undefined"
+  if (!sesionValida) {
+    return (
+      <div className="ingreso-container">
+        <div className="ingreso-card" style={{ textAlign: 'center', padding: '40px' }}>
+          <h2 style={{ color: '#e74c3c' }}>⚠️ Acceso Denegado / Sesión Expirada</h2>
+          <p>No tienes una sesión activa. Por favor, ingresa de nuevo.</p>
+          <button className="btn-confirm" onClick={() => navigate('/')}>Ir al Login</button>
+        </div>
+      </div>
+    );
+  }
+
+  useEffect(() => {
+    const validarAccesoInmediato = async () => {
+      try {
+        // Esta petición despertará al interceptor de App.jsx si el token ya expiró
+        await axios.get('http://localhost:3000/api/visitas/historial'); 
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          localStorage.clear();
+          navigate('/');
+        }
+      }
+    };
+    validarAccesoInmediato();
+  }, [navigate]);
+
+
+  useEffect(() => {
+    const cargarAreas = async () => {
+        try {
+            const respuesta = await axios.get('http://localhost:3000/api/config/areas');
+            setAreasDisponibles(respuesta.data);
+        } catch (error) {
+            console.error("Error al traer las áreas:", error);
+        }
+    };
+    cargarAreas();
+}, []);
+
+
+  useEffect(() => {
+    axios.get('http://localhost:3000/api/config/areas')
+        .then(res => setAreasDisponibles(res.data));
+}, []);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -98,11 +188,18 @@ const RegistroIngreso = () => {
               </div>
               <div className="input-group">
                 <label><MapPin size={16} /> Área de Destino</label>
-                <select name="area_destino" onChange={handleInputChange}>
-                  <option value="UCI">Unidad de Cuidados Intensivos (UCI)</option>
-                  <option value="Piso 4">Hospitalización - Piso 4</option>
-                  <option value="Urgencias">Urgencias</option>
-                </select>
+                <select 
+                    name="area_destino" 
+                    onChange={handleChange} // Asegúrate de tener tu función de cambio
+                    required
+                  >
+                    <option value="">Seleccione el área...</option>
+                    {areasDisponibles.map((area) => (
+                      <option key={area.id} value={area.nombre}>
+                        {area.nombre}
+                      </option>
+                    ))}
+                  </select>
               </div>
             </div>
 

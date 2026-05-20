@@ -8,7 +8,6 @@ const Visita = {
         VALUES (?, ?, ?, ?, ?, NOW())
     `;
     
-    // Pasamos los 5 valores en el orden exacto de los '?'
     const [result] = await db.query(sql, [
         datos.id_visitante,
         datos.id_usuario,

@@ -15,6 +15,7 @@ const MenuPrincipal = ({ user }) => {
 
   // Nombre del usuario que viene de la sesión
   const userName = user?.nombre || "Usuario";
+  const usuario = JSON.parse(localStorage.getItem('usuarioClinica'));
 
   // 1. Primero definimos TODAS las opciones posibles
 const opcionesMenu = [
@@ -49,11 +50,14 @@ const opcionesMenu = [
 ];
 
 const handleLogout = () => {
-  // Limpia los datos guardados en el navegador
+  // Opción A: Eliminar uno por uno completamente
   localStorage.removeItem('usuarioClinica');
+  localStorage.removeItem('tokenClinica'); // <--- Usa removeItem para que desaparezca la fila
   
-  // Fuerza una recarga hacia la página de login
-  window.location.href = '/'; 
+  // Opción B (Más profesional): Limpiar TODO de una vez
+  // localStorage.clear(); 
+
+  window.location.href = '/';
 };
 
 const opcionesPermitidas = opcionesMenu.filter(opcion => {
@@ -71,21 +75,41 @@ const opcionesPermitidas = opcionesMenu.filter(opcion => {
           <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <div className="brand">
+          <div className="brand" onClick={() => navigate('/inicio')} style={{ cursor: 'pointer' }}>
             <span className="plus-icon">+</span>
             <h1>CLÍNICA META</h1>
           </div>
         </div>
 
         <div className="topbar-right">
-          <button className="icon-btn"><Bell size={20} /></button>
+          {/* BOTÓN DE CONFIGURACIÓN: Solo visible para administradores */}
+          {user?.rol === 'administrador' && (
+            <button 
+              className="icon-btn" 
+              onClick={() => navigate('/configuracion')}
+              title="Configuración del sistema"
+            >
+              <Settings size={20} />
+            </button>
+          )}
+
+          {/* <button className="icon-btn">
+            <Bell size={20} />
+          </button> */}
+
           <div className="user-profile">
             <div className="user-info">
               <span className="user-name">{userName}</span>
-              <span className="user-role">{user?.rol || 'Personal'}</span>
+              {/* Mostramos el rol con la primera letra en mayúscula para que se vea más profesional */}
+              <span className="user-role">
+                {user?.rol ? user.rol.charAt(0).toUpperCase() + user.rol.slice(1) : 'Personal'}
+              </span>
             </div>
             <div className="user-avatar">
-              <UserIcon size={20} />
+              {/* El botón ahora envuelve al icono correctamente para mejorar el área de clic */}
+              <button className="avatar-btn" onClick={() => navigate('/Perfil')} title="Ver mi perfil">
+                <UserIcon size={20} />
+              </button>
             </div>
           </div>
         </div>
@@ -95,9 +119,18 @@ const opcionesPermitidas = opcionesMenu.filter(opcion => {
       <div className={`side-drawer ${isMenuOpen ? 'open' : ''}`}>
         <div className="drawer-content">
           <div className="drawer-section">
-            <button onClick={() => navigate('/configuracion')}><Settings size={18} /> Configuración</button>
-            <button onClick={() => navigate('/perfil')}><UserIcon size={18} /> Mi Perfil</button>
+            {/* CORRECCIÓN: Solo el admin ve el botón de Configuración en el menú lateral */}
+            {user?.rol === 'administrador' && (
+              <button onClick={() => navigate('/Configuracion')}>
+                <Settings size={18} /> Configuración
+              </button>
+            )}
+            
+            <button onClick={() => navigate('/Perfil')}>
+              <UserIcon size={18} /> Mi Perfil
+            </button>
           </div>
+          
           <button className="btn-logout-sidebar" onClick={handleLogout}>
             <LogOut size={18} /> Cerrar Sesión
           </button>
