@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f4f7f6; /* Fondo suave similar al inicio */
+    background-color: #f4f7f6;
     padding: 20px;
 }
 
@@ -49,6 +49,12 @@
     background: linear-gradient(180deg, #ffffff 0%, #f9fbfb 100%);
 }
 
+.perfil-avatar-section h2 {
+    margin-top: 15px;
+    font-size: 1.5rem;
+    color: #484c51;
+}
+
 .avatar-circle {
     width: 100px;
     height: 100px;
@@ -74,7 +80,7 @@
 
 .badge-rol.administrador {
     background-color: #fff3e0;
-    color: #e67e22; /* Color naranja distintivo de tus botones */
+    color: #e67e22;
 }
 
 .badge-rol.recepcionista {

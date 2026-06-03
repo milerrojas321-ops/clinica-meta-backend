@@ -13,15 +13,25 @@ const Login = ({ onLoginSuccess }) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   setError('');
 
   try {
-    const res = await axios.post('http://localhost:3000/api/auth/login', credentials);
+    // 🔍 Leemos el tiempo configurado en el sistema. Si no hay ninguno, por defecto dejamos '1h'
+    const tiempoConfigurado = localStorage.getItem('tiempoSesionClinica') || '1h';
+
+    // Armamos el paquete de datos dinámico
+    const loginData = {
+      usuario: credentials.usuario,       
+      password: credentials.password,     
+      tiempoExpiracion: tiempoConfigurado // 👈 ¡Aquí viaja el tiempo real configurado!
+    };
+
+    const res = await axios.post('http://localhost:3000/api/auth/login', loginData);
     
     if (res.data.success) {
-      localStorage.setItem('tokenClinica', res.data.token); // Guardamos la llave
+      localStorage.setItem('tokenClinica', res.data.token); 
       localStorage.setItem('usuarioClinica', JSON.stringify(res.data.user));
       
       if (onLoginSuccess) onLoginSuccess(res.data.user);
@@ -29,14 +39,13 @@ const Login = ({ onLoginSuccess }) => {
       navigate('/inicio'); 
     }
   } catch (err) {
-      if (err.response) {
-        setError(err.response.data.mensaje || 'Error al conectar con el servidor');
-      } else {
-        // Este es el error que te sale si el servidor de Node está apagado
-        setError('No se pudo establecer conexión con el backend');
-      }
+    if (err.response) {
+      setError(err.response.data.mensaje || 'Error al conectar con el servidor');
+    } else {
+      setError('No se pudo establecer conexión con el backend');
     }
-  };
+  }
+};
 
   return (
     <div className="login-container">

@@ -8,6 +8,7 @@ const Configuracion = () => {
 const navigate = useNavigate();
 const [nuevaArea, setNuevaArea] = useState('');
 const [areas, setAreas] = useState([]);
+const [tiempoExpiracion, setTiempoExpiracion] = useState('1h');
 
 // 1. Cargar áreas al iniciar
 useEffect(() => {
@@ -43,6 +44,27 @@ const eliminarArea = async (id) => {
     } catch (error) {
         alert("No se pudo eliminar");
     }
+};
+
+const handleDescargarBackup = async () => {
+  try {
+    const respuesta = await axios.get('http://localhost:3000/api/auth/backup', {
+      responseType: 'blob',
+    });
+
+    const url = window.URL.createObjectURL(new Blob([respuesta.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    
+    link.setAttribute('download', `backup_clinica_${new Date().toISOString().slice(0,10)}.sql`);
+    document.body.appendChild(link);
+    link.click();
+    
+    link.parentNode.removeChild(link);
+  } catch (error) {
+    console.error("Error al descargar el backup:", error);
+    alert("No se pudo generar la copia de seguridad en este momento.");
+  }
 };
 
 
@@ -116,7 +138,6 @@ return (
             </div>
                 <ul className="area-list">
                     {areas.map((area, index) => (
-                        // Usamos el id de la BD, o el índice si el id fallara
                         <li key={area.id || `area-${index}`}> 
                             <span>{area.nombre}</span>
                             <button onClick={() => eliminarArea(area.id)}>Eliminar</button>
@@ -131,12 +152,26 @@ return (
             <Shield size={18} />
             <h3>Seguridad de Sesión</h3>
             </div>
-            <div className="config-option">
-            <span>Tiempo de expiración del token</span>
-            <select className="select-modern">
-                <option value="60">1 Minuto (Pruebas)</option>
-                <option value="3600">1 Hora (Producción)</option>
-                <option value="28800">8 Horas (Turno completo)</option>
+            <div className="security-session-container">
+            <label htmlFor="tiempoExpiracion" className="block text-sm font-medium text-gray-700">
+                Tiempo de expiración del token
+            </label>
+            <select 
+                id="tiempoExpiracion"
+                name="tiempoExpiracion" 
+                value={tiempoExpiracion} 
+                onChange={(e) => {
+                const nuevoTiempo = e.target.value;
+                setTiempoExpiracion(nuevoTiempo);
+                // 💾 Guardamos la configuración de manera persistente en el navegador
+                localStorage.setItem('tiempoSesionClinica', nuevoTiempo);
+                }} 
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            >
+                <option value="1m">1 Minuto (Pruebas)</option>
+                <option value="15m">15 Minutos</option>
+                <option value="1h">1 Hora</option>
+                <option value="1d">1 Día</option>
             </select>
             </div>
         </section>
@@ -148,8 +183,11 @@ return (
             <h3>Base de Datos</h3>
             </div>
             <p className="section-desc">Respalda la información para evitar pérdidas por fallos en MySQL.</p>
-            <button className="btn-backup" onClick={() => alert('Generando archivo SQL...')}>
-            <Save size={18} /> Crear Backup Ahora
+            <button 
+            onClick={handleDescargarBackup}
+            className="btn-backup-estilo" // Las clases de Tailwind o CSS que ya tengas
+            >
+            Generar Copia de Seguridad
             </button>
         </section>
         </div>

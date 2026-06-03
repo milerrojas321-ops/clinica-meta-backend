@@ -1,16 +1,16 @@
 const express = require('express');
-const cors = require('cors'); // 1. IMPORTAR CORS
+const cors = require('cors'); // 1. IMPORTACION DE CORS
 const db = require('./src/database/db');
 const visitanteRoutes = require('./src/routes/visitanteRoutes');
 const visitaRoutes = require('./src/routes/visitaRoutes');
-const authRoutes = require('./src/routes/authRoutes'); // 2. IMPORTAR RUTAS DE LOGIN
+const authRoutes = require('./src/routes/authRoutes');
 const configRoutes = require('./src/routes/configRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // MIDDLEWARES
-app.use(cors()); // 3. ACTIVAR CORS (Vital para que React se conecte)
+app.use(cors()); // 3. ACTIVACION DE CORS
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 

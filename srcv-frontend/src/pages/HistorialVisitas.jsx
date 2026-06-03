@@ -45,14 +45,29 @@ const HistorialVisitas = () => {
     obtenerVisitas();
   }, []);
 
-  const visitasFiltradas = visitas.filter((v) => {
-    const nombreCompleto = `${v.nombres || ''} ${v.apellidos || ''}`.toLowerCase();
-    const coincideBusqueda = 
-      nombreCompleto.includes(busqueda.toLowerCase()) ||
-      (v.numero_documento && v.numero_documento.includes(busqueda));
-    const coincideFecha = filtroFecha ? v.fecha_entrada.includes(filtroFecha) : true;
-    return coincideBusqueda && coincideFecha;
-  });
+const visitasFiltradas = visitas.filter((v) => {
+  // 1. Creamos un solo bloque de texto con toda la información del registro en minúsculas
+  const nombreVisitante = `${v.nombres || ''} ${v.apellidos || ''}`.toLowerCase();
+  const documento = (v.numero_documento || '').toLowerCase();
+  const personaVisitada = (v.nombre_paciente || '').toLowerCase(); // Campo de la BD de la clínica
+
+  // Unimos todo en una sola "super cadena" para buscar en ella fácilmente
+  const datosRegistro = `${nombreVisitante} ${documento} ${personaVisitada}`;
+
+  // 2. Convertimos la búsqueda del usuario en un array de palabras sueltas limpiando espacios de más
+  const palabrasBusqueda = busqueda.toLowerCase().trim().split(/\s+/);
+
+  // 3. Verificamos que CADA una de las palabras ingresadas exista dentro de los datos del registro
+  // .every() devuelve true solo si todas las palabras pasan la prueba
+  const coincideBusqueda = palabrasBusqueda.every((palabra) => 
+    datosRegistro.includes(palabra)
+  );
+
+  // 4. El filtro de fecha se mantiene igual
+  const coincideFecha = filtroFecha ? v.fecha_entrada.includes(filtroFecha) : true;
+
+  return coincideBusqueda && coincideFecha;
+});
 
   return (
     <div className="historial-layout">

@@ -39,7 +39,7 @@ registrarSalida: async (id_visita) => {
                 vt.numero_documento,
                 v.nombre_paciente,
                 v.area_destino,
-                v.foto_perfil_url, -- Asegúrate de incluir esta columna
+                v.foto_perfil_url,
                 v.fecha_entrada,
                 v.fecha_salida
             FROM visitas v

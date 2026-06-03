@@ -14,20 +14,20 @@ const RegistroUsuarios = () => {
   const [status, setStatus] = useState({ type: '', msg: '' });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const verificarPermisos = async () => {
-      try {
-        // Intentamos una petición protegida
-        await axios.get('http://localhost:3000/api/visitas/historial');
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          localStorage.clear();
-          navigate('/');
-        }
-      }
-    };
-    verificarPermisos();
-  }, [navigate]);
+  // useEffect(() => {
+  //   const verificarPermisos = async () => {
+  //     try {
+  //       // Intentamos una petición protegida
+  //       await axios.get('http://localhost:3000/api/visitas/historial');
+  //     } catch (error) {
+  //       if (error.response && error.response.status === 401) {
+  //         localStorage.clear();
+  //         navigate('/');
+  //       }
+  //     }
+  //   };
+  //   verificarPermisos();
+  // }, [navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

@@ -64,7 +64,8 @@ const Perfil = () => {
           <div className="avatar-circle">
             <User size={50} />
           </div>
-          <h2>{usuario.nombre_completo}</h2>
+          {/* Si 'nombre_completo' no existe, intentará leer 'nombre' por compatibilidad */}
+          <h2>{usuario.nombre_completo || usuario.nombre || 'Usuario de la Clínica'}</h2>
           <span className={`badge-rol ${usuario.rol}`}>
             {usuario.rol === 'administrador' ? 'Administrador' : 'Recepcionista'}
           </span>
@@ -73,7 +74,7 @@ const Perfil = () => {
         <div className="perfil-info-grid">
           <div className="info-item">
             <label><Mail size={16} /> Usuario</label>
-            <p>{usuario.username}</p>
+            <p>{usuario.username || 'No especificado'}</p>
           </div>
           <div className="info-item">
             <label><Shield size={16} /> Permisos</label>
