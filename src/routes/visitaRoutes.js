@@ -10,6 +10,8 @@ router.get('/', verificarToken, visitaController.obtenerHistorial);
 
 router.get('/visitantes', verificarToken, visitanteController.obtenerVisitantes);
 
+router.get('/activas', verificarToken, visitaController.obtenerActivas);
+
 router.put('/salida/:id', verificarToken, visitaController.registrarSalida); // Usamos PUT porque estamos actualizando un dato existente
 
 

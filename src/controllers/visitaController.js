@@ -3,9 +3,7 @@ const Visitante = require('../models/Visitante');
 const Visita = require('../models/Visita');
 
 const visitaController = {
-    // src/controllers/visitaController.js
-// src/controllers/visitaController.js
-registrarVisita: async (req, res) => {
+    registrarVisita: async (req, res) => {
     try {
         // Unificamos la foto que viene del frontend
         const fotoARegistrar = req.body.foto || req.body.foto_perfil_url;
@@ -32,7 +30,7 @@ registrarVisita: async (req, res) => {
     }
 },
     
-        obtenerHistorial: async (req, res) => {
+    obtenerHistorial: async (req, res) => {
         try {
             const historial = await Visita.obtenerHistorialCompleto();
             // Verifica que historial no sea undefined o null antes de enviar
@@ -40,6 +38,16 @@ registrarVisita: async (req, res) => {
         } catch (error) {
             console.error("Error en backend:", error);
             res.status(500).json({ error: 'Error al obtener historial' });
+        }
+    },
+
+    obtenerActivas: async (req, res) => {
+        try {
+            const activas = await Visita.obtenerActivas();
+            res.json(activas || []);
+        } catch (error) {
+            console.error("Error al obtener visitas activas:", error);
+            res.status(500).json({ error: 'Error al obtener visitas activas' });
         }
     },
 

@@ -5,26 +5,35 @@
   box-sizing: border-box;
 }
 
-html, body, #root {
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-image: url('../assets/imagenMenu.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+  background-color: #0f172a; 
+}
+
+#root {
   width: 100%;
-  height: 100%;
-  overflow-x: hidden; /* Evita el scroll horizontal innecesario */
-  background-color: #f8fafc; /* Asegúrate de que el fondo sea el mismo que el de tu diseño */
 }
 
 .dashboard-layout {
   min-height: 100vh;
   width: 100%;
-  background-color: #f8fafc;
   display: flex;
   flex-direction: column;
+  /* Eliminamos las líneas de background-image, size, etc. de aquí */
 }
 
 /* TopBar a todo lo ancho */
 .topbar {
-  height: 70px;
+  height: 75px;                /* Un alto un poco más estilizado para que respire el logo */
   width: 100%;
-  background: white;
+  background: rgb(10, 35, 79);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -33,6 +42,21 @@ html, body, #root {
   position: sticky;
   top: 0;
   z-index: 1000;
+}
+
+/* Añade esta regla para centrar el título perfectamente en desktop */
+.welcome-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.welcome-section h2 {
+  color: #ffffff;
+  font-size: 1.5rem;          /* Un tamaño equilibrado */
+  font-weight: 600;
+  white-space: nowrap;        /* Evita que el título se rompa en dos líneas */
 }
 
 .topbar-left {
@@ -45,7 +69,7 @@ html, body, #root {
   background: none;
   border: none;
   cursor: pointer;
-  color: #64748b;
+  color: #82b6ff;
   padding: 8px;
   border-radius: 8px;
   transition: background 0.3s;
@@ -53,9 +77,14 @@ html, body, #root {
 
 .menu-toggle:hover { background: #f1f5f9; }
 
-.brand { display: flex; align-items: center; gap: 10px; }
-.plus-icon { color: #e11d48; font-size: 24px; font-weight: bold; }
-.brand h1 { font-size: 1.2rem; color: #0f172a; letter-spacing: 1px; }
+.brand {
+  background-image: url('../assets/logoClinicPlus.png');
+  height: 85px;               
+  width: 140px;                 
+  background-size: contain;     
+  background-repeat: no-repeat; 
+  background-position: center;  
+}
 
 .topbar-right { display: flex; align-items: center; gap: 20px; }
 
@@ -64,18 +93,75 @@ html, body, #root {
   align-items: center;
   gap: 12px;
   padding-left: 20px;
-  border-left: 1px solid #e2e8f0;
+  border-left: 1px solid #4f5864;
 }
 
 .user-info { display: flex; flex-direction: column; text-align: right; }
-.user-name { font-weight: 600; color: #1e293b; font-size: 0.9rem; }
-.user-role { font-size: 0.75rem; color: #94a3b8; text-transform: capitalize; }
+.user-role { font-size: 0.75rem; color: #2d84ff; text-transform: capitalize; }
 
-.user-avatar {
-  background: #f1f5f9;
+.user-name {
+  color: #bacbe7 !important; /* Prueba con un color llamativo y !important para verificar si reacciona */
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* .user-avatar {
+
+
+  background: rgb(49, 105, 195);
   padding: 8px;
   border-radius: 8px;
-  color: #64748b;
+  color: #a7c7f4;
+} */
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a7c7f4;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.3s;
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.1s ease;
+}
+
+.icon-btn:hover {
+  color: #ffffff;                 /* El icono/texto se vuelve blanco brillante */
+  background-color: rgba(255, 255, 255, 0.1); /* Crea un sutil fondo translúcido */
+}
+
+/* 2. El efecto de "salto" o pulsación al hacer clic (Active) */
+.icon-btn:active {
+  transform: scale(0.92);         /* Se encoge ligeramente simulando que lo hunden */
+}
+
+
+.avatar-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a7c7f4;
+  
+  /* Estilos para hacerlo más bonito y limpio */
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* La clave para que los cambios no sean bruscos */
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* 1. Cambio de color suave al pasar el mouse (Hover) */
+.avatar-btn:hover {
+  color: #ffffff;                 /* El icono/texto se vuelve blanco brillante */
+  background-color: rgba(255, 255, 255, 0.1); /* Crea un sutil fondo translúcido */
+}
+
+/* 2. El efecto de "salto" o pulsación al hacer clic (Active) */
+.avatar-btn:active {
+  transform: scale(0.92);         /* Se encoge ligeramente simulando que lo hunden */
 }
 
 /* Side Drawer (Hamburguesa) */
@@ -85,8 +171,8 @@ html, body, #root {
   left: -280px;
   width: 280px;
   height: calc(100vh - 70px);
-  background: white;
-  box-shadow: 10px 0 20px rgba(0,0,0,0.02);
+  background: rgb(255, 255, 255);
+  box-shadow: 10px 0 20px rgb(0, 0, 0);
   transition: left 0.3s ease;
   z-index: 999;
 }
@@ -111,7 +197,7 @@ html, body, #root {
   background: none;
   border-radius: 10px;
   cursor: pointer;
-  color: #475569;
+  color: #626262;
   transition: all 0.2s;
 }
 
@@ -127,16 +213,21 @@ html, body, #root {
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px; /* Separa limpiamente el título "Panel de Gestión" de las tarjetas */
 }
 
-.welcome-section { margin-bottom: 30px; }
-.welcome-section h2 { color: #1e293b; font-size: 1.8rem; }
-.welcome-section p { color: #64748b; }
+.welcome-section { margin-top: 5px; }
+.welcome-section h2 { color: #ffffff; font-size: 1.8rem; }
 
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  /* Cambiamos el minmax para que se acomoden mejor en pantallas grandes */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+  margin-top: 50px;
   gap: 25px;
+  width: 100%;
 }
 
 .menu-card {
@@ -171,8 +262,209 @@ html, body, #root {
   font-size: 0.85rem;
 }
 
+
+/* Contenedor Grid 50/50 */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr; /* Ajuste equilibrado para las dos mitades */
+  gap: 35px;
+  width: 100%;
+}
+
+/* Reajustamos tu grid de menús para que se compacte verticalmente */
+.panel-modulos .menu-grid {
+  margin-top: 0px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* Contenedor del Panel de Activos */
+.panel-activos {
+  background: rgb(26, 68, 135);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 25px;
+  border: 1px solid rgba(0, 0, 0, 0.305);
+  display: flex;
+  flex-direction: column;
+  max-height: 650px;
+}
+
+.activos-header h3 {
+  color: #ffffff;
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  font-weight: 600;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 10px;
+}
+
+.activos-lista {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-right: 5px;
+}
+
+/* Tarjeta tipo Notificación */
+.notificacion-tarjeta {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  position: relative; /* Clave para posicionar el Pop-over absoluto */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.notificacion-tarjeta:hover {
+  transform: translateX(3px);
+}
+
+.notificacion-foto {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #3498db;
+}
+
+.notificacion-info {
+  flex: 1;
+}
+
+.notificacion-info h4 {
+  color: #1e293b;
+  font-size: 1rem;
+  margin-bottom: 3px;
+}
+
+.notificacion-info p {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.notificacion-info p span {
+  font-weight: 600;
+  color: #1a4487;
+}
+
+.no-activos {
+  color: #cbd5e1;
+  text-align: center;
+  margin-top: 30px;
+  font-style: italic;
+}
+
+/* Estilos específicos del Pop-over */
+.popover-contenedor {
+  position: relative;
+}
+
+.btn-opciones-pop {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.btn-opciones-pop:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.popover-menu {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e2e8f0;
+  z-index: 100;
+  min-width: 140px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.btn-finalizar-visita {
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.85rem;
+  color: #e11d48;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.btn-finalizar-visita:hover {
+  background: #fff1f2;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Adaptación del grid 50/50 a móviles */
+@media (max-width: 1024px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .panel-activos {
+    max-height: 450px;
+  }
+}
+
 @media (max-width: 768px) {
-  .topbar { padding: 0 15px; }
-  .user-name { display: none; }
-  .main-content { padding: 20px; }
+  /* 1. Ajustes del contenedor de la barra */
+  .topbar { 
+    padding: 0 15px; 
+    height: 65px;             /* Más compacto en móviles */
+  }
+  
+  .main-content { 
+    padding: 20px 15px; 
+  }
+
+  /* 2. LA SOLUCIÓN: Ocultamos todo el contenedor del título central */
+  .welcome-section { 
+    display: none !important; 
+  }
+
+  /* 3. Reducir el tamaño del logo para pantallas pequeñas */
+  .brand {
+    height: 38px;
+    width: 105px;
+  }
+
+  /* 4. Ocultar los textos del perfil (Dejar solo el icono del avatar) */
+  .user-info { 
+    display: none !important; 
+  }
+  
+  .user-profile {
+    border-left: none; 
+    padding-left: 0;
+  }
+
+  /* 5. Asegurar que las tarjetas ocupen todo el ancho en una sola columna */
+  .menu-grid {
+    grid-template-columns: 1fr !important;
+    gap: 15px;
+  }
+
+  .menu-card {
+    padding: 20px; 
+  }
 }

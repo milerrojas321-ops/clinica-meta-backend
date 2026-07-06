@@ -28,22 +28,39 @@ registrarSalida: async (id_visita) => {
     return result;
 },
 
-    // Aquí movemos la consulta del SELECT con el JOIN
-    // src/models/Visita.js
-    obtenerHistorialCompleto: async () => {
+
+obtenerHistorialCompleto: async () => {
+    const sql = `
+        SELECT 
+            v.id_visita,
+            vt.nombres,
+            vt.apellidos,
+            vt.numero_documento,
+            v.nombre_paciente,
+            v.area_destino,
+            v.foto_perfil_url,
+            v.fecha_entrada,
+            v.fecha_salida
+        FROM visitas v
+        JOIN visitantes vt ON v.id_visitante = vt.id_visitante
+        ORDER BY v.fecha_entrada DESC
+    `;
+    const [rows] = await db.query(sql);
+    return rows;
+},
+
+obtenerActivas: async () => {
         const sql = `
             SELECT 
                 v.id_visita,
                 vt.nombres,
                 vt.apellidos,
-                vt.numero_documento,
-                v.nombre_paciente,
-                v.area_destino,
                 v.foto_perfil_url,
                 v.fecha_entrada,
-                v.fecha_salida
+                v.area_destino
             FROM visitas v
             JOIN visitantes vt ON v.id_visitante = vt.id_visitante
+            WHERE v.fecha_salida IS NULL
             ORDER BY v.fecha_entrada DESC
         `;
         const [rows] = await db.query(sql);
