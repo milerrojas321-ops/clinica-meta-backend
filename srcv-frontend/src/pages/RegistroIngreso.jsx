@@ -119,16 +119,6 @@ useEffect(() => {
     setImgSrc(imageSrc);
   }, [webcamRef]);
 
-  const simularEscaneo = () => {
-    setFormData({
-      ...formData,
-      nombres: "MILLER STIVEN",
-      apellidos: "GARCIA",
-      numero_documento: "1121900000",
-      stringCapturado: "DATA_PDF417_SIMULADO_CLINICA_META"
-    });
-  };
-
   const confirmarRegistro = async () => {
     if (!imgSrc) return alert("La fotografía es obligatoria.");
     try {
@@ -152,9 +142,6 @@ useEffect(() => {
             <h1>Registro de Visitante</h1>
             <p>Complete la información para autorizar el acceso</p>
           </div>
-          <button onClick={simularEscaneo} className="btn-scan-sim">
-            <Scan size={18} /> Simular Escaneo
-          </button>
         </header>
 
         <div className="ingreso-grid">

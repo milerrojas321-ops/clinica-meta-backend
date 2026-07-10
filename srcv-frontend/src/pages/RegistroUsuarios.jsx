@@ -55,8 +55,8 @@ const RegistroUsuarios = () => {
           <button onClick={() => navigate('/inicio')} className="btn-back-minimal" title="Volver al inicio">
             <ArrowLeft size={22} />
           </button>
-          <div>
-            <h1>Nuevo Personal</h1>
+          <div className="color-letter-header">
+            <h1>Registro de Usuarios</h1>
             <p>Registro de acceso para personal autorizado</p>
           </div>
         </header>

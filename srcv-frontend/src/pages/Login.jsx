@@ -25,7 +25,7 @@ const handleSubmit = async (e) => {
     const loginData = {
       usuario: credentials.usuario,       
       password: credentials.password,     
-      tiempoExpiracion: tiempoConfigurado // 👈 ¡Aquí viaja el tiempo real configurado!
+      tiempoExpiracion: tiempoConfigurado
     };
 
     const res = await axios.post('http://localhost:3000/api/auth/login', loginData);
@@ -50,9 +50,7 @@ const handleSubmit = async (e) => {
   return (
     <div className="login-container">
       <form className="login-card" onSubmit={handleSubmit}>
-        <div className="logo-placeholder">🏥</div>
-        <h2>CLÍNICA META</h2>
-        <p>Sistema de Registro de Visitas</p>
+        <div className="logo-placeholder"></div>
         
         {error && <div className="error-msg">{error}</div>}
         

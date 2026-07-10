@@ -3,42 +3,93 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+  width: 100%;
+  
+  /* 🌟 Capa oscura sobrepuesta para apagar el fondo y que no quite atención */
+  background-image: linear-gradient(rgba(15, 23, 42, 0.65), rgba(15, 23, 42, 0.65)), url(../assets/recepcionimg.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .login-card {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  background: rgb(14, 55, 132);
+  padding: 3.5rem 2.5rem;      /* Más aire interno arriba y abajo para simetría */
+  border-radius: 24px;         /* Cambiado de 10% a píxeles fijos para evitar deformación */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08); /* Fina línea elegante */
   text-align: center;
   width: 100%;
-  max-width: 350px;
+  max-width: 400px;            /* Ancho ideal para un formulario balanceado */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.login-card h2 { color: #0056b3; margin-bottom: 5px; }
-.login-card p { color: #666; margin-bottom: 25px; font-size: 14px; }
+.logo-placeholder {
+  width: 380px;                /* Ajustado el tamaño para que gane presencia */
+  height: 240px;              
+  margin-top: -50px;
+  
+  background-image: url(../assets/logoClinicPlus.png);
+  background-size: contain;   
+  background-repeat: no-repeat;
+  background-position: center;
+}
 
 .login-card input {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: 14px 16px;          /* Inputs un poco más estilizados */
+  margin-bottom: 20px;         /* Espacio uniforme entre campos */
+  background-color: white;
+  border: 1px solid rgba(0, 76, 208, 0.2);
+  border-radius: 12px;         /* Curvatura más sobria y profesional */
   box-sizing: border-box;
+  
+  color: #1e293b;          
+  font-size: 0.95rem;      
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+/* Efecto foco premium para dar una sensación de desarrollo cuidado */
+.login-card input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.login-card input::placeholder {
+  color: #64748b;          
+  opacity: 1;              
 }
 
 .btn-login {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   background: #0056b3;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
+  margin-top: 5px;
 }
 
-.btn-login:hover { background: #004494; }
-.error-msg { color: red; margin-bottom: 10px; font-size: 13px; }
+.btn-login:hover { 
+  background: #2563eb; 
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.error-msg { 
+  color: #ef4444; 
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+  margin-bottom: 15px; 
+  font-size: 13px; 
+  font-weight: 500;
+}

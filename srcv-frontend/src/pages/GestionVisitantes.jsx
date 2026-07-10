@@ -43,6 +43,7 @@ const GestionVisitantes = () => {
 
   return (
     <div className="visitantes-page">
+      <div className="visitantes-container">
       <header className="visitantes-header">
         <div className="header-left">
           <button 
@@ -51,7 +52,6 @@ const GestionVisitantes = () => {
             title="Volver al Inicio"
           >
             <ArrowLeft size={24} />
-            <span className="tooltip-text">Inicio</span>
           </button>
           <div>
             <h1>Directorio de Visitantes</h1>
@@ -168,6 +168,7 @@ const GestionVisitantes = () => {
         </div>
       )}
     </div>
+  </div>
   );
 };
 

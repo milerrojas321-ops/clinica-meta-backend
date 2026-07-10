@@ -26,7 +26,6 @@ html, body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  /* Eliminamos las líneas de background-image, size, etc. de aquí */
 }
 
 /* TopBar a todo lo ancho */
@@ -280,7 +279,7 @@ html, body {
 
 /* Contenedor del Panel de Activos */
 .panel-activos {
-  background: rgb(26, 68, 135);
+  background: rgb(17, 50, 102);
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 25px;

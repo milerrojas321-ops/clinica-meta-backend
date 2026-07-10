@@ -1,21 +1,25 @@
 .register-admin-container {
   min-height: 100vh;
-  background-color: #fcfdfe;
+  width: 100%;
+  background-image: linear-gradient(rgba(15, 23, 42, 0.484), rgba(15, 23, 42, 0.5)), url('../assets/fondoAdmin.png');
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
-  font-family: 'Segoe UI', sans-serif;
+  padding: 40px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .register-card {
-  background: white;
+  background: rgba(25, 58, 89, 0.885);
   width: 100%;
   max-width: 600px;
   padding: 40px;
   border-radius: 30px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-  border: 1px solid #f1f5f9;
+  border: 1px solid #00172e;
 }
 
 .register-header {
@@ -26,12 +30,24 @@
   position: relative;
 }
 
+.color-letter-header h1 {
+  color: #ffffff;
+  font-size: 2.6rem;
+  font-weight: 600;
+}
+
+.color-letter-header p {
+  color: #b3d5ff;
+  font-size: 1.0rem;
+  font-weight: 350;
+} 
+
 .btn-back-minimal {
   background: #fff7ed;
   border: none;
-  color: #f97316;
+  color: #007bff;
   padding: 10px;
-  border-radius: 15px;
+  border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -40,7 +56,7 @@
 }
 
 .btn-back-minimal:hover {
-  background: #f97316;
+  background: #0065e8;
   color: white;
   transform: translateX(-3px);
 }
@@ -69,7 +85,7 @@
   gap: 8px;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #475569;
+  color: #d7e8ff;
 }
 
 /* --- CORRECCIÓN DE VISIBILIDAD DE LETRA --- */
@@ -95,7 +111,7 @@
 /* Mantener tus transiciones y hovers originales */
 .input-field input:focus, 
 .select-modern:focus {
-  border-color: #f97316;
+  border-color: #000000;
   background: white !important;
   color: #000000 !important;
   box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.08);
@@ -103,7 +119,7 @@
 
 .btn-register-orange {
   margin-top: 15px;
-  background: #f97316;
+  background: #1e5ea9;
   color: white;
   border: none;
   padding: 16px;
@@ -119,7 +135,7 @@
 }
 
 .btn-register-orange:hover {
-  background: #ea580c;
+  background: #48a3ff;
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(234, 88, 12, 0.2);
 }

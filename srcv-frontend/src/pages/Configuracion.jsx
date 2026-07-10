@@ -153,7 +153,7 @@ return (
             <h3>Seguridad de Sesión</h3>
             </div>
             <div className="security-session-container">
-            <label htmlFor="tiempoExpiracion" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="tiempoExpiracion" className="text-token">
                 Tiempo de expiración del token
             </label>
             <select 
@@ -177,15 +177,15 @@ return (
         </section>
 
         {/* SECCIÓN: MANTENIMIENTO */}
-        <section className="config-section">
-            <div className="section-title">
+        <section className="config-section backup-section">
+            <div className="section-title backup-title">
             <Database size={18} />
             <h3>Base de Datos</h3>
             </div>
-            <p className="section-desc">Respalda la información para evitar pérdidas por fallos en MySQL.</p>
+            <p className="section-desc backup-text">Respalda la información para evitar pérdidas por fallos en MySQL.</p>
             <button 
             onClick={handleDescargarBackup}
-            className="btn-backup-estilo" // Las clases de Tailwind o CSS que ya tengas
+            className="btn-backup"
             >
             Generar Copia de Seguridad
             </button>

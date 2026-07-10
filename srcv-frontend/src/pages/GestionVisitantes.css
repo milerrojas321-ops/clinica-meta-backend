@@ -1,8 +1,31 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .visitantes-page {
-  background-color: #fcfdfe; /* Blanco casi puro */
   min-height: 100vh;
+  width: 100%;
+  background-image: linear-gradient(rgba(15, 23, 42, 0.355), rgba(15, 23, 42, 0.355)), url('../assets/registroVisitantes.png');
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 40px;
-  color: #334155;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.visitantes-container {
+  background: rgba(10, 21, 74, 0.786);
+  width: 100%;
+  max-width: 1400px;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+  padding: 40px;
+  border: 1px solid #083d71;
 }
 
 .visitantes-header {
@@ -19,26 +42,25 @@
 }
 
 .back-circle {
-  position: relative;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: none;
+  background: var(--white);
+  color: var(--primary-blue);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+  flex-shrink: 0; /* Evita que el botón se deforme */
 }
 
 .back-circle:hover {
-  background: #f8fafc;
-  color: #1a5678;
-  border-color: #1a5678;
-}
-
-.back-circle::after {
-  content: "Inicio";
-  position: absolute;
-  left: 50px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
+  transform: translateX(-3px);
+  background: var(--primary-blue);
+  color: white;
 }
 
 .back-circle:hover::after {
@@ -46,8 +68,8 @@
 }
 
 .piso-tag {
-  background: #e0f2fe;
-  color: #0369a1;
+  background: #ffffff;
+  color: #0060ae;
   padding: 2px 8px;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -60,29 +82,209 @@
 
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.6); /* Slate oscuro semitransparente */
+  backdrop-filter: blur(8px); /* Desenfoque de fondo premium */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+  padding: 20px;
+}
+
+/* Tarjeta contenedora del Modal */
+.modal-content {
+  background: rgba(10, 21, 74, 0.9); /* Sincronizado con tu esquema de color */
+  border: 1px solid #083d71;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Cabecera del Modal */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h2 {
+  color: #eef5ff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Botón de cerrar (X) */
+.btn-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
-  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
 }
 
-.modal-content {
-  background: white;
-  width: 95%;
-  max-width: 550px;
-  border-radius: 20px;
-  padding: 25px;
-  max-height: 85vh;
+.btn-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ff00d4; /* Detalle rosa neón */
+}
+
+.perfil-resumen {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Avatar circular */
+.modal-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #00b3ff; /* Borde cian */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aecbf5;
+}
+
+.modal-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-name {
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.modal-doc {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin: 0;
+  font-family: monospace; /* Estilo de código para números de identificación */
+}
+
+.historial-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #00b3ff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 20px 24px 10px 24px;
+  margin: 0;
+}
+
+/* Lista scrolleable */
+.historial-lista {
+  padding: 0 24px 24px 24px;
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+
+/* Estilización de la barra de scroll */
+.historial-lista::-webkit-scrollbar {
+  width: 6px;
+}
+
+.historial-lista::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+/* Ítem individual de historial */
+.historial-item {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 4px solid #10b981; /* Borde verde para indicar flujo de historial exitoso */
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.historial-item:hover {
+  transform: translateX(4px);
+  border-color: rgba(0, 179, 255, 0.3);
+}
+
+.historial-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 15px;
+}
+
+.historial-fecha {
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Tag de área de destino (UCI, Urgencias, etc.) */
+.piso-tag {
+  background: rgba(37, 99, 235, 0.15);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.historial-footer {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.historial-footer strong {
+  color: #ffffff;
+}
+
+/* Estado sin historial */
+.no-history {
+  text-align: center;
+  padding: 40px 20px;
+  color: #64748b;
+  font-size: 0.95rem;
+  border: 2px dashed rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.01);
 }
 
 .card-avatar {
-  width: 100%;
-  height: 200px;        /* Forzamos a que todas las cajas midan lo mismo de alto */
+  width: 130px;
+  height: 100px;        /* Forzamos a que todas las cajas midan lo mismo de alto */
   overflow: hidden;     /* Evita que cualquier contenido se salga de la tarjeta */
   margin-bottom: 15px;  /* Separa la foto del nombre del visitante */
 }
@@ -95,11 +297,11 @@
   border-radius: 15px;  /* Le da el toque redondeado estético que combine con la tarjeta */
 }
 
-.visitantes-header h1 { color: #0f172a; margin: 0; font-size: 1.8rem; }
-.visitantes-header p { color: #64748b; margin: 5px 0 0 0; }
+.visitantes-header h1 { color: #d0deff; margin: 0; font-size: 1.8rem; }
+.visitantes-header p { color: #d4d4d4; margin: 5px 0 0 0; }
 
 .btn-nuevo-visitante {
-  background: #10b981; /* Verde esmeralda médico */
+  background: #00ff84; /* Verde esmeralda médico */
   color: white;
   border: none;
   padding: 12px 24px;
@@ -123,10 +325,11 @@
   align-items: center;
   gap: 15px;
   max-width: 600px;
+  margin-bottom: 30px;
   transition: border-color 0.3s;
 }
 
-.search-bar-modern:focus-within { border-color: #3b82f6; }
+.search-bar-modern:focus-within { border-color: #4c83d6; }
 
 .search-bar-modern input {
   background: transparent !important;
@@ -148,13 +351,15 @@
 }
 
 .visitante-card {
-  background: white;
+  background: #1a336c;
   border-radius: 20px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid #0c3f74;
   padding: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+  box-shadow: 0 7px 18px rgba(4, 4, 4, 0.433);
   transition: transform 0.3s;
   position: relative;
+  min-width: 300px;
+  max-height: 400px;
 }
 
 .visitante-card:hover { transform: translateY(-5px); }
@@ -171,6 +376,12 @@
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 15px;
+}
+
+.card-content h3 {
+  margin: 0;
+  font-size: 0.70rem;
+  color: #d5e2ff;
 }
 
 .tooltip-text {
@@ -190,7 +401,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #64748b;
+  color: #d3d3d3;
   font-size: 0.9rem;
   margin-top: 8px;
 }
@@ -214,3 +425,50 @@
 }
 
 .btn-ver-mas:hover { background: #f1f5f9; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================
+  ADAPTACIÓN PARA MÓVILES
+   ========================================== */
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 10px;
+  }
+  
+  .modal-content {
+    max-height: 92vh;
+    border-radius: 18px;
+  }
+  
+  .perfil-resumen {
+    flex-direction: column;
+    text-align: center;
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .historial-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  
+  .piso-tag {
+    align-self: flex-start;
+  }
+}
