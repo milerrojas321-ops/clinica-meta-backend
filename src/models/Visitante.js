@@ -1,55 +1,140 @@
 const db = require('../database/db');
 
 const Visitante = {
-    // src/models/Visitante.js
-crearOActualizar: async (datos) => {
-    const { nombres, apellidos, cedula, numero_documento, telefono, foto, foto_perfil_url } = datos;
+  crearOActualizar: async (datos) => {
+    const { nombres, apellidos, cedula, numero_documento, telefono, foto, foto_perfil_url, actualizarFoto } = datos;
     
-    // Unificamos el documento y la foto independientemente de cómo vengan del front o controller
-    const docReal = cedula || numero_documento;
-    const fotoReal = foto || foto_perfil_url; 
+    const docReal = numero_documento || cedula;
+    const fotoReal = foto_perfil_url || foto || null;
+    const telReal = telefono || '';
 
-    const query = `
-        INSERT INTO visitantes (tipo_documento, numero_documento, nombres, apellidos, telefono, foto_perfil_url)
-        VALUES (?, ?, ?, ?, ?, ?)
+    // Si hay foto o debe actualizarse
+    if (actualizarFoto || fotoReal) {
+      const query = `
+        INSERT INTO visitantes (tipo_documento, numero_documento, nombres, apellidos, telefono, foto_perfil_url, fecha_foto)
+        VALUES ('CC', ?, ?, ?, ?, ?, NOW())
         ON DUPLICATE KEY UPDATE 
+            nombres = VALUES(nombres),
+            apellidos = VALUES(apellidos),
             telefono = VALUES(telefono),
-            foto_perfil_url = VALUES(foto_perfil_url) -- Aquí se actualiza la foto en el perfil maestro
-    `;
-
-    const [result] = await db.query(query, [
-        'CC', 
-        docReal, 
-        nombres, 
-        apellidos, 
-        telefono, 
-        fotoReal 
-    ]);
-
-    // Retornamos el id_visitante para que la tabla 'visitas' pueda crear la relación
-    if (result.insertId === 0) {
+            foto_perfil_url = VALUES(foto_perfil_url),
+            fecha_foto = NOW()
+      `;
+      const [result] = await db.query(query, [docReal, nombres, apellidos, telReal, fotoReal]);
+      
+      if (result.insertId === 0) {
         const [rows] = await db.query('SELECT id_visitante FROM visitantes WHERE numero_documento = ?', [docReal]);
         return rows[0].id_visitante;
+      }
+      return result.insertId;
+    } else {
+      const query = `
+        INSERT INTO visitantes (tipo_documento, numero_documento, nombres, apellidos, telefono)
+        VALUES ('CC', ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE 
+            nombres = VALUES(nombres),
+            apellidos = VALUES(apellidos),
+            telefono = VALUES(telefono)
+      `;
+      const [result] = await db.query(query, [docReal, nombres, apellidos, telReal]);
+      
+      if (result.insertId === 0) {
+        const [rows] = await db.query('SELECT id_visitante FROM visitantes WHERE numero_documento = ?', [docReal]);
+        return rows[0].id_visitante;
+      }
+      return result.insertId;
     }
-    
-    return result.insertId;
-},
+  },
 
-    obtenerTodos: async () => {
-    // Concatenamos nombres y apellidos para que coincida con el frontend
+  buscarPorCriterio: async (criterio) => {
     const sql = `
-        SELECT 
-            id_visitante as id, 
-            CONCAT(nombres, ' ', apellidos) as nombre_completo, 
-            tipo_documento, 
-            numero_documento, 
-            telefono, 
-            foto_perfil_url as foto 
-        FROM visitantes
+      SELECT 
+        id_visitante AS id, 
+        id_visitante,
+        nombres,
+        apellidos,
+        CONCAT(nombres, ' ', apellidos) AS nombre_completo, 
+        tipo_documento, 
+        numero_documento, 
+        telefono, 
+        foto_perfil_url AS foto,
+        foto_perfil_url,
+        fecha_foto,
+        DATEDIFF(NOW(), fecha_foto) AS dias_foto
+      FROM visitantes
+      WHERE numero_documento LIKE ? OR nombres LIKE ? OR apellidos LIKE ?
+      LIMIT 5
+    `;
+    const busqueda = `%${criterio}%`;
+    const [rows] = await db.query(sql, [busqueda, busqueda, busqueda]);
+    return rows;
+  },
+
+  buscarPorDocumento: async (cedula) => {
+    const sql = `
+      SELECT 
+        id_visitante AS id, 
+        id_visitante,
+        nombres,
+        apellidos,
+        CONCAT(nombres, ' ', apellidos) AS nombre_completo, 
+        tipo_documento, 
+        numero_documento, 
+        telefono, 
+        foto_perfil_url AS foto,
+        foto_perfil_url,
+        fecha_foto,
+        DATEDIFF(NOW(), fecha_foto) AS dias_foto
+      FROM visitantes
+      WHERE numero_documento = ?
+    `;
+    const [rows] = await db.query(sql, [cedula]);
+    return rows[0] || null;
+  },
+
+  obtenerTodos: async () => {
+    const sql = `
+      SELECT 
+        id_visitante AS id, 
+        id_visitante,
+        nombres,
+        apellidos,
+        CONCAT(nombres, ' ', apellidos) AS nombre_completo, 
+        tipo_documento, 
+        numero_documento, 
+        telefono, 
+        foto_perfil_url AS foto,
+        foto_perfil_url,
+        fecha_foto
+      FROM visitantes
     `;
     const [rows] = await db.query(sql);
     return rows;
-}
+  },
+
+  obtenerHistorial: async (id_visitante) => {
+    try {
+      const sql = `
+        SELECT 
+          v.id_visita,
+          v.fecha_entrada,
+          v.fecha_salida,
+          v.area_destino,
+          v.es_acompanante,
+          CONCAT(p.nombres, ' ', p.apellidos) AS nombre_paciente
+        FROM visitas v
+        INNER JOIN consultas c ON v.id_consulta = c.id_consulta
+        INNER JOIN pacientes p ON c.id_paciente = p.Id_paciente
+        WHERE v.id_visitante = ?
+        ORDER BY v.fecha_entrada DESC
+      `;
+      const [rows] = await db.query(sql, [id_visitante]);
+      return rows;
+    } catch (error) {
+      console.error("Error en SQL obtenerHistorial:", error);
+      throw error;
+    }
+  }
 };
 
 module.exports = Visitante;

@@ -2,18 +2,17 @@ const express = require('express');
 const router = express.Router();
 const visitaController = require('../controllers/visitaController');
 const visitanteController = require('../controllers/visitanteController');
-const verificarToken = require('../middlewares/authMiddleware');
+const { verificarToken, verificarAdmin } = require('../middlewares/authMiddleware');
 
 router.post('/ingreso', verificarToken, visitaController.registrarVisita);
-
 router.get('/', verificarToken, visitaController.obtenerHistorial);
-
 router.get('/visitantes', verificarToken, visitanteController.obtenerVisitantes);
-
 router.get('/activas', verificarToken, visitaController.obtenerActivas);
+router.get('/acompanante/:id_paciente', verificarToken, visitaController.obtenerAcompananteActivo);
+router.put('/salida/:id', verificarToken, visitaController.registrarSalida);
 
-router.put('/salida/:id', verificarToken, visitaController.registrarSalida); // Usamos PUT porque estamos actualizando un dato existente
-
-
+// Rutas de exportación (Solo Administrador)
+router.get('/exportar-excel', verificarToken, verificarAdmin, visitaController.exportarVisitasExcel);
+router.get('/exportar-pdf', verificarToken, verificarAdmin, visitaController.exportarVisitasPDF);
 
 module.exports = router;

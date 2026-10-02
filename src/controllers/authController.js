@@ -1,3 +1,4 @@
+// controllers/authController.js
 const db = require('../database/db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -16,11 +17,22 @@ const authController = {
 
             if (result.length > 0) {
                 const usuarioEncontrado = result[0];
+
+                // VALIDACIÓN DE USUARIO DESACTIVADO
+                if (usuarioEncontrado.activo === 0 || usuarioEncontrado.activo === false) {
+                    return res.status(403).json({ 
+                        success: false, 
+                        mensaje: 'Tu cuenta ha sido desactivada. Contacta al administrador.' 
+                    });
+                }
+
                 const coinciden = await bcrypt.compare(password, usuarioEncontrado.password);
 
                 if (coinciden) {
+                    const idReal = usuarioEncontrado.id_usuario;
+
                     const userPayload = { 
-                        id: usuarioEncontrado.id, 
+                        id_usuario: idReal,
                         nombre_completo: usuarioEncontrado.nombre_completo, 
                         username: usuarioEncontrado.username,              
                         rol: usuarioEncontrado.rol 
@@ -28,7 +40,6 @@ const authController = {
 
                     const tiempoFinal = tiempoExpiracion || '1h';
 
-                    // Generamos el token usando la variable dinámica
                     const token = jwt.sign(
                         userPayload, 
                         'TU_PALABRA_SECRETA_SUPER_SEGURA', 
@@ -52,7 +63,7 @@ const authController = {
         }
     },
 
-register: async (req, res) => {
+    register: async (req, res) => {
         const { nombre_completo, username, password, rol } = req.body;
 
         if (!nombre_completo || !username || !password || !rol) {
@@ -63,7 +74,6 @@ register: async (req, res) => {
         }
 
         try {
-            // Verificar si el usuario ya existe
             const [usuarioExistente] = await db.query(
                 'SELECT * FROM usuarios WHERE username = ?', 
                 [username]
@@ -76,14 +86,12 @@ register: async (req, res) => {
                 });
             }
 
-            // Encriptar la contraseña por seguridad
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-            // Insertar en la base de datos
             const query = `
-                INSERT INTO usuarios (nombre_completo, username, password, rol) 
-                VALUES (?, ?, ?, ?)
+                INSERT INTO usuarios (nombre_completo, username, password, rol, activo) 
+                VALUES (?, ?, ?, ?, 1)
             `;
             await db.query(query, [nombre_completo, username, hashedPassword, rol]);
 
@@ -100,41 +108,81 @@ register: async (req, res) => {
             });
         }
     },
+
+    // LISTAR TODOS LOS USUARIOS
+    obtenerUsuarios: async (req, res) => {
+        try {
+            const [usuarios] = await db.query(
+                'SELECT id_usuario, nombre_completo, username, rol, activo FROM usuarios ORDER BY id_usuario DESC'
+            );
+            return res.json({ success: true, usuarios });
+        } catch (error) {
+            console.error("Error al obtener usuarios:", error);
+            return res.status(500).json({ success: false, msg: "Error al listar usuarios" });
+        }
+    },
+
+    // CAMBIAR ESTADO ACTIVO/INACTIVO
+    cambiarEstadoUsuario: async (req, res) => {
+        const { id } = req.params;
+        const { activo } = req.body;
+
+        try {
+            const estadoNumerico = activo ? 1 : 0;
+            await db.query(
+                'UPDATE usuarios SET activo = ? WHERE id_usuario = ?', 
+                [estadoNumerico, id]
+            );
+            return res.json({ 
+                success: true, 
+                msg: `Usuario ${activo ? 'activado' : 'desactivado'} con éxito.` 
+            });
+        } catch (error) {
+            console.error("Error al cambiar estado:", error);
+            return res.status(500).json({ success: false, msg: "Error al actualizar estado del usuario" });
+        }
+    },
+
+    verificarSesion: (req, res) => {
+        return res.json({ 
+            success: true, 
+            valida: true, 
+            usuario: req.usuario || null 
+        });
+    },
+
     generarBackup: async (req, res) => {
-        // Configuración de tu base de datos (Ajusta con tus credenciales de phpMyAdmin)
-        const dbUser = 'root';
-        const dbPassword = ''; // Deja vacío si en XAMPP no tienes contraseña
-        const dbName = 'clinica_meta_registro'; // 🚨 REVISA: Pon el nombre exacto de tu BD
+        const dbHost = '192.168.11.247';
+        const dbUser = 'visitas';
+        const dbPassword = 'visitas';
+        const dbName = 'control_visitas'; 
         
-        // Creamos un nombre de archivo único con la fecha de hoy
         const fecha = new Date().toISOString().slice(0,10);
         const nombreArchivo = `backup_${dbName}_${fecha}.sql`;
-        const rutaArchivo = path.join(__dirname, `../backups/${nombreArchivo}`);
 
-        // Asegurar que la carpeta 'backups' exista en tu proyecto backend
         const carpetaBackups = path.join(__dirname, '../backups');
         if (!fs.existsSync(carpetaBackups)){
-            fs.mkdirSync(carpetaBackups);
+            fs.mkdirSync(carpetaBackups, { recursive: true });
         }
 
-        // Construimos el comando de mysqldump (Apto para Windows/XAMPP)
-        // Si tienes contraseña usas: `mysqldump -u ${dbUser} -p${dbPassword} ${dbName} > "${rutaArchivo}"`
-        const comando = `"C:\\xampp\\mysql\\bin\\mysqldump" -u ${dbUser} ${dbName} > "${rutaArchivo}"`;
+        const rutaArchivo = path.join(carpetaBackups, nombreArchivo);
 
-        // Ejecutamos el comando en la terminal del servidor
+        const mysqldumpExecutable = `"C:\\databases\\mysql\\bin\\mysqldump.exe"`;
+        const comando = `${mysqldumpExecutable} -h ${dbHost} -u ${dbUser} -p${dbPassword} ${dbName} > "${rutaArchivo}"`;
+
         exec(comando, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error al ejecutar mysqldump: ${error.message}`);
                 return res.status(500).json({ success: false, mensaje: 'Error al generar la copia de seguridad.' });
             }
 
-            // Si todo salió bien, enviamos el archivo generado para que el navegador lo descargue
             res.download(rutaArchivo, nombreArchivo, (err) => {
                 if (err) {
                     console.error(`Error al enviar el archivo: ${err}`);
                 }
-                // Opcional: Eliminar el archivo del servidor después de descargarlo para no llenar espacio
-                fs.unlinkSync(rutaArchivo); 
+                if (fs.existsSync(rutaArchivo)) {
+                    fs.unlinkSync(rutaArchivo); 
+                }
             });
         });
     }

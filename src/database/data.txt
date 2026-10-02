@@ -1,0 +1,106 @@
+-- 1. Agregar campo para la fecha de actualización de la foto en la tabla visitantes
+ALTER TABLE visitantes 
+ADD COLUMN fecha_foto DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+-- 2. Asegurar que 'numero_documento' sea UNIQUE para evitar registros duplicados
+ALTER TABLE visitantes 
+ADD UNIQUE (numero_documento);
+
+
+
+
+-- 1. Agregar el atributo de límite de visitantes a tu tabla de áreas existente
+ALTER TABLE areas 
+ADD COLUMN max_visitantes INT NOT NULL DEFAULT 2;
+
+-- Opcional: Actualizar el límite específico para cada área según tu imagen
+UPDATE areas SET max_visitantes = 1 WHERE nombre = 'UCI';
+UPDATE areas SET max_visitantes = 1 WHERE nombre = 'Urgencias';
+UPDATE areas SET max_visitantes = 2 WHERE nombre = 'Pediatría';
+UPDATE areas SET max_visitantes = 2 WHERE nombre = 'Maternas';
+
+
+-- 2. Crear la tabla de pacientes
+CREATE TABLE IF NOT EXISTS pacientes (
+    id_paciente INT AUTO_INCREMENT PRIMARY KEY,
+    tipo_documento VARCHAR(10) NOT NULL DEFAULT 'CC',
+    numero_documento VARCHAR(20) UNIQUE NOT NULL,
+    nombres VARCHAR(100) NOT NULL,
+    apellidos VARCHAR(100) NOT NULL,
+    id_area INT NOT NULL,
+    cama VARCHAR(20) NOT NULL,
+    estado ENUM('Activo', 'Alta', 'Trasladado') DEFAULT 'Activo',
+    permite_visitas BOOLEAN DEFAULT TRUE,
+    fecha_ingreso DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_egreso DATETIME NULL,
+    
+    -- Relación con tu tabla de áreas
+    CONSTRAINT fk_pacientes_areas 
+        FOREIGN KEY (id_area) 
+        REFERENCES areas(id) 
+        ON DELETE RESTRICT 
+        ON UPDATE CASCADE
+);
+
+
+-- 3. Datos de prueba para realizar las verificaciones en tu backend
+INSERT INTO pacientes (tipo_documento, numero_documento, nombres, apellidos, id_area, cama) 
+VALUES 
+('CC', '1001234567', 'Carlos', 'Gómez', 1, 'Cama UCI-01'),      -- UCI (1 visitante)
+('CC', '1007654321', 'María', 'Rodríguez', 2, 'Box Urgencias-3'),-- Urgencias (1 visitante)
+('CC', '1009876543', 'Laura', 'Pérez', 5, 'Habitación 204');     -- Maternas (2 visitantes)
+
+
+
+
+
+
+
+INSERT INTO pacientes (tipo_documento, numero_documento, nombres, apellidos, id_area, cama, estado, permite_visitas) VALUES
+-- Área 1: UCI
+('CC', '1001000001', 'Juan Manuel', 'Pérez Gómez', 1, 'Cama UCI-01', 'Activo', TRUE),
+('CC', '1001000002', 'Ana María', 'Rodríguez Torres', 1, 'Cama UCI-02', 'Activo', TRUE),
+('CC', '1001000003', 'Carlos Eduardo', 'López Vargas', 1, 'Cama UCI-03', 'Activo', FALSE), -- Sin visitas
+('CC', '1001000004', 'Dora Inés', 'Martínez Silva', 1, 'Cama UCI-04', 'Activo', TRUE),
+('CC', '1001000005', 'Luis Fernando', 'García Castro', 1, 'Cama UCI-05', 'Activo', TRUE),
+('CC', '1001000006', 'Marta Lucía', 'Ramírez Morales', 1, 'Cama UCI-06', 'Activo', TRUE),
+('CC', '1001000007', 'Jorge Eliécer', 'Gómez Hernández', 1, 'Cama UCI-07', 'Alta', TRUE),
+('CC', '1001000008', 'Sonia Patricia', 'Díaz Moreno', 1, 'Cama UCI-08', 'Activo', TRUE),
+('CC', '1001000009', 'Ramiro Antonio', 'Sánchez Rojas', 1, 'Cama UCI-09', 'Activo', TRUE),
+('CC', '1001000010', 'Esperanza', 'Romero Gutiérrez', 1, 'Cama UCI-10', 'Activo', FALSE),
+
+-- Área 2: Urgencias
+('CC', '1002000011', 'Andrés Felipe', 'Álvarez Medina', 2, 'Box Urg-01', 'Activo', TRUE),
+('CC', '1002000012', 'Diana Marcela', 'Suárez Parra', 2, 'Box Urg-02', 'Activo', TRUE),
+('CC', '1002000013', 'Gonzalo', 'Mendoza Castillo', 2, 'Box Urg-03', 'Activo', TRUE),
+('CC', '1002000014', 'Claudia Patricia', 'Cárdenas Acosta', 2, 'Box Urg-04', 'Activo', TRUE),
+('CC', '1002000015', 'Hernán Darío', 'Ortiz Guerrero', 2, 'Box Urg-05', 'Alta', TRUE),
+('CC', '1002000016', 'Luz Marina', 'Salazar Ríos', 2, 'Camilla Urg-06', 'Activo', TRUE),
+('CC', '1002000017', 'Víctor Hugo', 'Navarro Peña', 2, 'Camilla Urg-07', 'Activo', TRUE),
+('CC', '1002000018', 'Sandra Milena', 'Molina Cruz', 2, 'Camilla Urg-08', 'Activo', TRUE),
+('CC', '1002000019', 'Gustavo Adolfo', 'Delgado Cabrera', 2, 'Camilla Urg-09', 'Activo', TRUE),
+('CC', '1002000020', 'Paola Andrea', 'Ríos Bermúdez', 2, 'Camilla Urg-10', 'Trasladado', TRUE),
+
+-- Área 3: Pediatría
+('TI', '1003000021', 'Mateo', 'Velásquez Franco', 3, 'Hab 301-A', 'Activo', TRUE),
+('TI', '1003000022', 'Sofía', 'Ospina Reyes', 3, 'Hab 301-B', 'Activo', TRUE),
+('TI', '1003000023', 'Santiago', 'Benítez Aguirre', 3, 'Hab 302-A', 'Activo', TRUE),
+('TI', '1003000024', 'Valentina', 'Giraldo Marín', 3, 'Hab 302-B', 'Activo', TRUE),
+('TI', '1003000025', 'Samuel', 'Cardona Henao', 3, 'Hab 303-A', 'Activo', TRUE),
+('TI', '1003000026', 'Isabella', 'Mejía Quintero', 3, 'Hab 303-B', 'Alta', TRUE),
+('TI', '1003000027', 'Emmanuel', 'Trujillo Andrade', 3, 'Hab 304-A', 'Activo', TRUE),
+('TI', '1003000028', 'Mariana', 'Echeverri Jaramillo', 3, 'Hab 304-B', 'Activo', TRUE),
+('TI', '1003000029', 'Gabriel', 'Londoño Castaño', 3, 'Hab 305-A', 'Activo', FALSE),
+('TI', '1003000030', 'Luciana', 'Zapata Correa', 3, 'Hab 305-B', 'Activo', TRUE),
+
+-- Área 5: Maternas
+('CC', '1005000031', 'Camila Alejandra', 'Pineda Bravo', 5, 'Hab 501-A', 'Activo', TRUE),
+('CC', '1005000032', 'Natalia', 'Ceballos Orozco', 5, 'Hab 501-B', 'Activo', TRUE),
+('CC', '1005000033', 'Adriana', 'Gálvez Nieto', 5, 'Hab 502-A', 'Activo', TRUE),
+('CC', '1005000034', 'Yolanda', 'Serrano Prado', 5, 'Hab 502-B', 'Alta', TRUE),
+('CC', '1005000035', 'Verónica', 'Montoya Duque', 5, 'Hab 503-A', 'Activo', TRUE),
+('CC', '1005000036', 'Lorena', 'Arias Montero', 5, 'Hab 503-B', 'Activo', TRUE),
+('CC', '1005000037', 'Jessica', 'Castañeda Lara', 5, 'Hab 504-A', 'Activo', TRUE),
+('CC', '1005000038', 'Angela María', 'Paredes Rincón', 5, 'Hab 504-B', 'Activo', TRUE),
+('CC', '1005000039', 'Tatiana', 'Soler Figueroa', 5, 'Hab 505-A', 'Activo', TRUE),
+('CC', '1005000040', 'Liliana', 'Barrios Olaya', 5, 'Hab 505-B', 'Activo', TRUE);

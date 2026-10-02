@@ -1,0 +1,694 @@
+/* Layout Principal */
+.egresos-layout {
+  min-height: 100vh;
+  width: 100%;
+  background: #080d1a linear-gradient(rgba(8, 13, 26, 0.92), rgba(15, 23, 42, 0.96)), 
+              url('../assets/recepcionimg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #f8fafc;
+  padding-bottom: 40px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.egresos-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Header Flotante */
+.egresos-header-glass {
+  background: #0f172a;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+  padding: 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+.header-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-volver {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1e293b;
+  color: #38bdf8;
+  border: 1px solid #334155;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  transition: all 0.2s ease;
+}
+
+.btn-volver:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.header-title-group h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.header-title-group .subtitle {
+  margin: 4px 0 0 0;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.metric-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #1e293b;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 8px 16px;
+  border-radius: 12px;
+}
+
+.metric-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+.metric-lbl {
+  font-size: 0.75rem;
+  color: #cbd5e1;
+  text-transform: uppercase;
+}
+
+/* Barra de Pestañas (Tabs) Tactiles */
+.egresos-tabs-bar {
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 10px;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 20px;
+  min-height: 48px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: #1e293b;
+  color: #cbd5e1;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #60a5fa;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+}
+
+/* Formulario y Botón de Búsqueda */
+.filtro-bar {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.search-input-wrapper .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #38bdf8;
+}
+
+.search-input-wrapper input {
+  width: 100%;
+  height: 50px;
+  padding: 10px 14px 10px 44px;
+  border-radius: 12px;
+  background: #090d16;
+  border: 1.5px solid #334155;
+  color: #ffffff;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.search-input-wrapper input:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+.btn-buscar-egreso {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  padding: 0 24px;
+  min-height: 50px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-buscar-egreso:hover {
+  background: #0369a1;
+  transform: translateY(-1px);
+}
+
+/* Tarjeta del Paciente */
+.paciente-card-glass {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.paciente-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 16px;
+}
+
+.paciente-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  color: #ffffff;
+}
+
+.doc-badge {
+  background: #1e293b;
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: monospace;
+}
+
+.status-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.status-pill-boleta {
+  padding: 10px 16px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-pill-boleta.aprobado {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid #22c55e;
+}
+
+.status-pill-boleta.pendiente {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid #ef4444;
+}
+
+/* Ficha de Egreso Confirmado */
+.egreso-confirmado-box {
+  margin-top: 10px;
+  padding: 18px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1.5px solid #22c55e;
+  border-radius: 12px;
+}
+
+.egreso-confirmado-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4ade80;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 12px;
+}
+
+.egreso-confirmado-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  font-size: 0.95rem;
+  color: #f1f5f9;
+}
+
+.egreso-confirmado-grid span {
+  color: #94a3b8;
+  display: block;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+}
+
+/* Detalles del Paciente */
+.paciente-detalles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.detalle-box {
+  background: #1e293b;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid #334155;
+}
+
+.detalle-box .lbl {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.detalle-box .val {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 4px;
+}
+
+.egreso-opciones-container {
+  margin-top: 10px;
+  padding: 18px;
+  background: #131d31;
+  border-radius: 12px;
+  border: 1px solid #334155;
+}
+
+.advertencia-visitas-activas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid #f59e0b;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.campo-textarea-group label {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.campo-textarea-group textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: #090d16;
+  border: 1.5px solid #334155;
+  color: #ffffff;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.campo-textarea-group textarea:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+.btn-finalizar-salida {
+  width: 100%;
+  padding: 16px;
+  min-height: 54px;
+  background: #10b981;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-finalizar-salida:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+.btn-finalizar-salida:disabled {
+  background: #334155;
+  color: #94a3b8;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* --- Panel de Historial y Filtros --- */
+.historial-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel-filtros-glass {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.filtros-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.buscador-input-box {
+  position: relative;
+  flex: 1;
+  min-width: 280px;
+}
+
+.buscador-input-box .icon-search {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #38bdf8;
+}
+
+.buscador-input-box input {
+  width: 100%;
+  height: 46px;
+  padding: 10px 10px 10px 42px;
+  border-radius: 10px;
+  background: #090d16;
+  border: 1.5px solid #334155;
+  color: #ffffff;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.fechas-grupo {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.fecha-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #090d16;
+  padding: 8px 14px;
+  height: 46px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  box-sizing: border-box;
+}
+
+.fecha-picker-item .icon-cal { color: #38bdf8; }
+.fecha-picker-item span { font-size: 0.85rem; color: #cbd5e1; font-weight: 600; }
+.fecha-picker-item input {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.rangos-rapidos-grupo {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-rango-rapido {
+  padding: 10px 14px;
+  min-height: 46px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #38bdf8;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-rango-rapido:hover {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
+.btn-refresh-historial {
+  height: 46px;
+  width: 46px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #38bdf8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tabla de Historial (Diseño Nitido de Alto Contraste) */
+.tabla-historial-container {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.tabla-scroll-wrapper {
+  overflow-x: auto;
+}
+
+.tabla-egresos {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  color: #f8fafc;
+  font-size: 0.95rem;
+}
+
+.tabla-egresos thead tr {
+  background: #1e293b;
+  border-bottom: 2px solid #334155;
+  color: #38bdf8;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+.tabla-egresos th {
+  padding: 16px 18px;
+  font-weight: 700;
+}
+
+.tabla-egresos tbody tr {
+  border-bottom: 1px solid #1e293b;
+  transition: background 0.15s;
+}
+
+.tabla-egresos tbody tr.row-even { background: #0f172a; }
+.tabla-egresos tbody tr.row-odd { background: #141e33; }
+
+.tabla-egresos tbody tr:hover {
+  background: #1e293b;
+}
+
+.tabla-egresos td {
+  padding: 16px 18px;
+  vertical-align: middle;
+}
+
+.td-fecha {
+  white-space: nowrap;
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.td-fecha .cell-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.td-paciente {
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.td-documento {
+  color: #cbd5e1;
+  font-family: monospace;
+  font-weight: 600;
+}
+
+.td-orientador {
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.badge-area {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.td-observaciones {
+  color: #cbd5e1;
+  max-width: 280px;
+}
+
+.td-vacio {
+  text-align: center;
+  padding: 40px;
+  color: #cbd5e1;
+  font-size: 1rem;
+}
+
+/* --- OPTIMIZACIÓN RESPONSIVA Y DEDICADA PARA TABLETS --- */
+@media (max-width: 900px) {
+  .egresos-header-glass {
+    padding: 16px;
+  }
+
+  .filtro-bar {
+    flex-direction: column;
+  }
+
+  .btn-buscar-egreso {
+    width: 100%;
+  }
+
+  .filtros-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fechas-grupo {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .fecha-picker-item {
+    flex: 1;
+  }
+
+  /* Transformación de Tabla a Cards Adaptables en Tablet/Móvil */
+  .tabla-egresos thead {
+    display: none;
+  }
+
+  .tabla-egresos, .tabla-egresos tbody, .tabla-egresos tr, .tabla-egresos td {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .tabla-egresos tbody tr {
+    margin-bottom: 14px;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 12px 16px;
+    background: #141e33 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  .tabla-egresos td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #1e293b;
+    text-align: right;
+  }
+
+  .tabla-egresos td:last-child {
+    border-bottom: none;
+  }
+
+  .tabla-egresos td::before {
+    content: attr(data-label);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    text-align: left;
+  }
+
+  .td-paciente {
+    font-size: 1.1rem;
+  }
+
+  .td-observaciones {
+    max-width: 100%;
+  }
+}

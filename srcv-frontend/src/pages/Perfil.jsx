@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, Shield, LogOut, ArrowLeft } from 'lucide-react';
+import { User, Shield, LogOut, ArrowLeft, KeyRound, UserCheck, Sparkles } from 'lucide-react';
 import './Perfil.css';
 
 const Perfil = () => {
@@ -9,85 +9,103 @@ const Perfil = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-  const verificarSesion = async () => {
-    try {
-      // Validamos con el servidor antes de mostrar nada
-      await axios.get('http://localhost:3000/api/auth/verificar-sesion');
-    } catch (error) {
-      if (error.response?.status === 401) {
-        localStorage.clear();
-        navigate('/');
-      }
-    }
-  };
-  verificarSesion();
-}, [navigate]);
-
-  useEffect(() => {
-    const cargarDatosPerfil = async () => {
+    const verificarYCargar = async () => {
       try {
-        // 1. Validamos sesión y traemos datos al mismo tiempo
-        // Usamos la información guardada en localStorage o una petición al backend
-        const datosGuardados = JSON.parse(localStorage.getItem('usuarioClinica'));
-        
-        // 2. Verificación proactiva con el servidor
         await axios.get('http://localhost:3000/api/auth/verificar-sesion');
-        
+        const datosGuardados = JSON.parse(localStorage.getItem('usuarioClinica'));
         if (datosGuardados) {
           setUsuario(datosGuardados);
         }
       } catch (error) {
-        // Si el token expiró (401), el interceptor o este catch sacarán al usuario
-        if (error.response && error.response.status === 401) {
+        if (error.response?.status === 401) {
           localStorage.clear();
           navigate('/');
         }
       }
     };
-
-    cargarDatosPerfil();
+    verificarYCargar();
   }, [navigate]);
 
-  if (!usuario) return null; // O un spinner de carga
+  if (!usuario) {
+    return (
+      <div className="perfil-loading">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  const esAdmin = usuario.rol === 'administrador';
 
   return (
-    <div className="perfil-container">
-      <div className="perfil-card">
-        <header className="perfil-header">
-          <button onClick={() => navigate('/inicio')} className="btn-back">
-            <ArrowLeft size={20} />
+    <div className="perfil-page">
+      <div className="perfil-card-glass">
+        {/* Cabecera con botón de regreso */}
+        <header className="perfil-header-glass">
+          <button onClick={() => navigate('/inicio')} className="btn-volver-perfil" title="Volver al inicio">
+            <ArrowLeft size={18} />
+            <span>Volver</span>
           </button>
-          <h1>Mi Perfil</h1>
+          <div className="header-badge-status">
+            <Sparkles size={14} className="icon-sparkle" />
+            <span>Cuenta Activa</span>
+          </div>
         </header>
 
-        <div className="perfil-avatar-section">
-          <div className="avatar-circle">
-            <User size={50} />
+        {/* Sección del Avatar y Presentación */}
+        <div className="perfil-hero-section">
+          <div className="avatar-wrapper">
+            <div className="avatar-glow"></div>
+            <div className="avatar-circle">
+              <User size={52} />
+            </div>
           </div>
-          {/* Si 'nombre_completo' no existe, intentará leer 'nombre' por compatibilidad */}
-          <h2>{usuario.nombre_completo || usuario.nombre || 'Usuario de la Clínica'}</h2>
-          <span className={`badge-rol ${usuario.rol}`}>
-            {usuario.rol === 'administrador' ? 'Administrador' : 'Recepcionista'}
-          </span>
-        </div>
 
-        <div className="perfil-info-grid">
-          <div className="info-item">
-            <label><Mail size={16} /> Usuario</label>
-            <p>{usuario.username || 'No especificado'}</p>
-          </div>
-          <div className="info-item">
-            <label><Shield size={16} /> Permisos</label>
-            <p>{usuario.rol === 'administrador' ? 'Acceso Total' : 'Solo Registros'}</p>
+          <h2 className="user-fullname">
+            {usuario.nombre_completo || usuario.nombre || 'Usuario de la Clínica'}
+          </h2>
+
+          <div className={`badge-rol-pill ${usuario.rol || 'recepcionista'}`}>
+            <Shield size={14} />
+            <span>{esAdmin ? 'Administrador System' : 'Recepcionista Operativo'}</span>
           </div>
         </div>
 
+        {/* Bloque de Información detallada */}
+        <div className="perfil-details-grid">
+          <div className="detail-card">
+            <div className="detail-icon-box">
+              <UserCheck size={18} />
+            </div>
+            <div className="detail-info">
+              <span className="detail-label">Nombre de Usuario</span>
+              <p className="detail-value">{usuario.username || 'No especificado'}</p>
+            </div>
+          </div>
+
+          <div className="detail-card">
+            <div className="detail-icon-box">
+              <KeyRound size={18} />
+            </div>
+            <div className="detail-info">
+              <span className="detail-label">Nivel de Acceso</span>
+              <p className="detail-value">
+                {esAdmin ? 'Control Total & Reportes' : 'Registro de Entradas / Salidas'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Botón de Salida */}
         <footer className="perfil-footer">
-          <button className="btn-logout" onClick={() => {
-            localStorage.clear();
-            navigate('/');
-          }}>
-            <LogOut size={18} /> Cerrar Sesión
+          <button 
+            className="btn-logout-glass" 
+            onClick={() => {
+              localStorage.clear();
+              navigate('/');
+            }}
+          >
+            <LogOut size={18} />
+            <span>Cerrar Sesión</span>
           </button>
         </footer>
       </div>

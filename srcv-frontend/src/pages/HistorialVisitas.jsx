@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-// AGREGA ESTOS ICONOS A LA LISTA: Users, Clock, MapPin, FileText
 import { 
   Search, 
   Calendar, 
@@ -9,7 +8,10 @@ import {
   Users, 
   Clock, 
   MapPin, 
-  FileText 
+  FileText,
+  CheckCircle2,
+  LogOut,
+  FileSpreadsheet
 } from 'lucide-react'; 
 import { useNavigate } from 'react-router-dom';
 import './HistorialVisitas.css';
@@ -20,11 +22,14 @@ const HistorialVisitas = () => {
   const [filtroFecha, setFiltroFecha] = useState('');
   const navigate = useNavigate();
 
+  // Obtener datos del usuario en sesión y verificar si es administrador
+  const usuarioSesion = JSON.parse(localStorage.getItem('usuarioClinica')) || {};
+  const esAdmin = usuarioSesion?.rol === 'administrador';
+
   const handleSalida = async (id) => {
     if (window.confirm("¿Confirmar salida del visitante?")) {
       try {
         await axios.put(`http://localhost:3000/api/visitas/salida/${id}`);
-        // Recargar los datos para actualizar la tabla
         const res = await axios.get('http://localhost:3000/api/visitas');
         setVisitas(res.data);
       } catch (err) {
@@ -45,83 +50,144 @@ const HistorialVisitas = () => {
     obtenerVisitas();
   }, []);
 
-const visitasFiltradas = visitas.filter((v) => {
-  // 1. Creamos un solo bloque de texto con toda la información del registro en minúsculas
-  const nombreVisitante = `${v.nombres || ''} ${v.apellidos || ''}`.toLowerCase();
-  const documento = (v.numero_documento || '').toLowerCase();
-  const personaVisitada = (v.nombre_paciente || '').toLowerCase(); // Campo de la BD de la clínica
+  const descargarReporteVisitas = async (tipo) => {
+    try {
+      const token = localStorage.getItem('tokenClinica');
 
-  // Unimos todo en una sola "super cadena" para buscar en ella fácilmente
-  const datosRegistro = `${nombreVisitante} ${documento} ${personaVisitada}`;
+      const response = await axios.get(`http://localhost:3000/api/visitas/exportar-${tipo}`, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : ''
+        },
+        responseType: 'blob'
+      });
 
-  // 2. Convertimos la búsqueda del usuario en un array de palabras sueltas limpiando espacios de más
-  const palabrasBusqueda = busqueda.toLowerCase().trim().split(/\s+/);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `reporte_visitas.${tipo === 'excel' ? 'xlsx' : 'pdf'}`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(`Error al exportar a ${tipo}:`, err);
+      alert(`No se pudo descargar el archivo ${tipo.toUpperCase()}. Verifica tus permisos.`);
+    }
+  };
 
-  // 3. Verificamos que CADA una de las palabras ingresadas exista dentro de los datos del registro
-  // .every() devuelve true solo si todas las palabras pasan la prueba
-  const coincideBusqueda = palabrasBusqueda.every((palabra) => 
-    datosRegistro.includes(palabra)
-  );
+  const visitasFiltradas = visitas.filter((v) => {
+    const nombreVisitante = `${v.nombres || ''} ${v.apellidos || ''}`.toLowerCase();
+    const documento = (v.numero_documento || '').toLowerCase();
+    const personaVisitada = (v.nombre_paciente || '').toLowerCase();
 
-  // 4. El filtro de fecha se mantiene igual
-  const coincideFecha = filtroFecha ? v.fecha_entrada.includes(filtroFecha) : true;
+    const datosRegistro = `${nombreVisitante} ${documento} ${personaVisitada}`;
+    const palabrasBusqueda = busqueda.toLowerCase().trim().split(/\s+/);
 
-  return coincideBusqueda && coincideFecha;
-});
+    const coincideBusqueda = palabrasBusqueda.every((palabra) => 
+      datosRegistro.includes(palabra)
+    );
+
+    const coincideFecha = filtroFecha ? v.fecha_entrada?.includes(filtroFecha) : true;
+
+    return coincideBusqueda && coincideFecha;
+  });
 
   return (
     <div className="historial-layout">
-      {/* Sidebar o Barra lateral decorativa opcional puede ir aquí */}
-      <div className="historial-main">
-        <header className="historial-header-premium">
-          <div className="header-left">
-            <button onClick={() => navigate('/inicio')} className="btn-back-circle">
-              <ArrowLeft size={24} />
-            </button>
-            <div>
-              <h1>Historial de Accesos</h1>
-              <p className="subtitle">Gestión y monitoreo de visitas - Clínica Meta</p>
-            </div>
+      <header className="historial-header-glass">
+        <div className="header-top-bar">
+          <button onClick={() => navigate('/inicio')} className="btn-volver">
+            <ArrowLeft size={18} />
+            <span>Volver</span>
+          </button>
+          
+          <div className="header-title-group">
+            <h2>Historial de Accesos</h2>
+            <p className="subtitle">Gestión y monitoreo en tiempo real de visitas — Clínica Meta</p>
           </div>
-          <div className="header-stats">
-            <div className="stat-card">
-              <Users className="icon-blue" size={20} />
-              <div>
-                <span className="stat-value">{visitasFiltradas.length}</span>
-                <span className="stat-label">Registros</span>
+
+          <div className="metrics-bar">
+            <div className="metric-chip">
+              <Users size={20} className="icon-blue" />
+              <div className="metric-info">
+                <span className="metric-val">{visitasFiltradas.length}</span>
+                <span className="metric-lbl">Registros</span>
               </div>
             </div>
           </div>
-        </header>
+        </div>
 
-        <section className="filtros-container-premium">
-          <div className="search-box-premium">
-            <Search size={20} className="search-icon" />
+        <div className="filtro-bar" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div className="search-input-wrapper" style={{ flex: 1 }}>
+            <Search size={18} className="search-icon" />
             <input 
               type="text" 
-              placeholder="Buscar por nombre, apellido o documento..." 
+              placeholder="Buscar por paciente, visitante o documento..." 
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
             />
           </div>
-          <div className="date-box-premium">
-            <Calendar size={20} className="date-icon" />
+
+          <div className="date-input-wrapper">
+            <Calendar size={18} className="date-icon" />
             <input 
               type="date" 
               value={filtroFecha}
               onChange={(e) => setFiltroFecha(e.target.value)}
             />
           </div>
-        </section>
 
-        <div className="tabla-container-premium">
-          <table className="table-premium">
+          {/* Renderizado condicional: Solo se muestra si es Administrador */}
+          {esAdmin && (
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button 
+                onClick={() => descargarReporteVisitas('excel')} 
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 14px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  backgroundColor: '#107c41',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  fontWeight: '500'
+                }}
+              >
+                <FileSpreadsheet size={16} /> Excel
+              </button>
+              <button 
+                onClick={() => descargarReporteVisitas('pdf')} 
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 14px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  backgroundColor: '#bb2d3b',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  fontWeight: '500'
+                }}
+              >
+                <FileText size={16} /> PDF
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
+
+      <main className="historial-content">
+        <div className="tabla-container-glass">
+          <table className="table-modern">
             <thead>
               <tr>
-                <th>Identificación</th>
+                <th>Documento</th>
                 <th>Visitante</th>
-                <th>Detalles de Visita</th>
-                <th>Fecha y Hora</th>
+                <th>Destino y Paciente</th>
+                <th>Fecha / Hora Entrada</th>
                 <th>Estado</th>
               </tr>
             </thead>
@@ -129,10 +195,10 @@ const visitasFiltradas = visitas.filter((v) => {
               {visitasFiltradas.length > 0 ? (
                 visitasFiltradas.map((v) => (
                   <tr key={v.id_visita} className="row-hover">
-                    <td className="col-id">
-                      <div className="documento-badge">{v.numero_documento}</div>
+                    <td>
+                      <span className="documento-badge">{v.numero_documento || 'Sin doc'}</span>
                     </td>
-                    <td className="col-user">
+                    <td>
                       <div className="user-info-cell">
                         <div className="avatar-wrapper">
                           {v.foto_perfil_url ? (
@@ -142,36 +208,43 @@ const visitasFiltradas = visitas.filter((v) => {
                           )}
                         </div>
                         <div className="user-text">
-                          <span className="user-name">{`${v.nombres} ${v.apellidos}`}</span>
+                          <span className="user-name">
+                            {v.visitante_completo || `${v.nombres || ''} ${v.apellidos || ''}`.trim() || 'Desconocido'}
+                          </span>
                           <span className="user-sub">Visitante Autorizado</span>
                         </div>
                       </div>
                     </td>
-                    <td className="col-details">
+                    <td>
                       <div className="visit-detail">
-                        <MapPin size={14} className="icon-detail" />
+                        <MapPin size={14} className="icon-blue" />
                         <span>{v.area_destino}</span>
                       </div>
                       <div className="visit-detail patient">
-                        <Clock size={14} className="icon-detail" />
-                        <span>Paciente: {v.nombre_paciente}</span>
+                        <User size={14} className="icon-muted" />
+                        <span>Paciente: <strong>{v.nombre_paciente || 'No especificado'}</strong></span>
                       </div>
                     </td>
-                    <td className="col-date">
+                    <td>
                       <div className="date-cell">
                         <span className="date-main">{new Date(v.fecha_entrada).toLocaleDateString()}</span>
-                        <span className="date-hour">{new Date(v.fecha_entrada).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        <span className="date-hour">
+                          <Clock size={12} style={{ display: 'inline', marginRight: '4px' }} />
+                          {new Date(v.fecha_entrada).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        </span>
                       </div>
                     </td>
-                    <td className="col-status">
+                    <td>
                       {v.fecha_salida ? (
-                        <span className="status-pill salió">Completado</span>
+                        <span className="status-pill completado">
+                          <CheckCircle2 size={13} /> Completado
+                        </span>
                       ) : (
                         <button 
                           onClick={() => handleSalida(v.id_visita)} 
                           className="btn-marcar-salida"
                         >
-                          Marcar Salida
+                          <LogOut size={13} /> Marcar Salida
                         </button>
                       )}
                     </td>
@@ -179,16 +252,18 @@ const visitasFiltradas = visitas.filter((v) => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="empty-state">
-                    <FileText size={48} />
-                    <p>No se encontraron registros que coincidan con la búsqueda</p>
+                  <td colSpan="5">
+                    <div className="empty-state-container">
+                      <FileText size={44} />
+                      <p>No se encontraron registros que coincidan con la búsqueda</p>
+                    </div>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

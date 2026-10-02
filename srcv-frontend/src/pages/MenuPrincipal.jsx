@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
   UserPlus, ClipboardList, Users, UserCog, 
-  LogOut, Menu, X, Settings, User as UserIcon, MoreVertical 
+  LogOut, Menu, X, Settings, User as UserIcon, MoreVertical, Bed, LogOut as ExitIcon 
 } from 'lucide-react'; 
 import './MenuPrincipal.css';
 
@@ -13,27 +13,8 @@ const MenuPrincipal = ({ user: propUser }) => {
   const [popOverActivo, setPopOverActivo] = useState(null);
   const navigate = useNavigate();
 
-
   const [activeUser, setActiveUser] = useState(propUser || null);
 
-  // 2. Buscamos el usuario en la sesión al cargar el componente
-  useEffect(() => {
-    if (!activeUser) {
-      // Usamos el nombre exacto de tu clave del LocalStorage
-      const usuarioGuardado = localStorage.getItem('usuarioClinica'); 
-      if (usuarioGuardado) {
-        try {
-          setActiveUser(JSON.parse(usuarioGuardado));
-        } catch (e) {
-          console.error("Error al parsear el usuario de la sesión", e);
-        }
-      }
-    }
-    cargarVisitasActivas();
-  }, []);
-  const userName = activeUser?.nombre_completo || activeUser?.nombre || "Usuario";
-
-  // Cargar visitas activas desde el backend al montar el componente
   const cargarVisitasActivas = async () => {
     try {
       const token = localStorage.getItem('tokenClinica');
@@ -47,17 +28,33 @@ const MenuPrincipal = ({ user: propUser }) => {
   };
 
   useEffect(() => {
+    if (!activeUser) {
+      const usuarioGuardado = localStorage.getItem('usuarioClinica');
+      if (usuarioGuardado) {
+        try {
+          setActiveUser(JSON.parse(usuarioGuardado));
+        } catch (e) {
+          console.error("Error al parsear el usuario de la sesión", e);
+        }
+      }
+    }
     cargarVisitasActivas();
+
+    const interval = setInterval(() => {
+      cargarVisitasActivas();
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  // Función para finalizar visita desde el Pop-over
+  const userName = activeUser?.nombre_completo || activeUser?.nombre || "Usuario";
+
   const handleFinalizarVisita = async (id_visita) => {
     try {
       const token = localStorage.getItem('tokenClinica');
       await axios.put(`http://localhost:3000/api/visitas/salida/${id_visita}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      // Cerrar el popover y recargar la lista
       setPopOverActivo(null);
       cargarVisitasActivas();
     } catch (error) {
@@ -67,6 +64,8 @@ const MenuPrincipal = ({ user: propUser }) => {
   };
 
   const opcionesMenu = [
+    { titulo: 'Control de Camas', descripcion: 'Monitoreo en tiempo real del aforo y ocupación de camas por áreas.', icono: <Bed size={35} />, ruta: '/control-camas', color: '#00b4d8' },
+    { titulo: 'Egresos y Portería', descripcion: 'Validación de boletas de salida y control de alta de pacientes.', icono: <ExitIcon size={35} />, ruta: '/egresos', color: '#e74c3c' },
     { titulo: 'Registrar Visita', descripcion: 'Escaneo de cédula y toma de fotografía para nuevos ingresos.', icono: <UserPlus size={35} />, ruta: '/registro-ingreso', color: '#2ecc71' },
     { titulo: 'Historial de Visitas', descripcion: 'Consulta quién ha entrado y salido de la clínica.', icono: <ClipboardList size={35} />, ruta: '/historial-visitas', color: '#3498db' },
     { titulo: 'Historial de Visitantes', descripcion: 'Base de datos maestra de personas registradas.', icono: <Users size={35} />, ruta: '/visitantes', color: '#9b59b6' },
@@ -87,7 +86,6 @@ const MenuPrincipal = ({ user: propUser }) => {
 
   return (
     <div className="dashboard-layout">
-      {/* TopBar */}
       <nav className="topbar">
         <div className="topbar-left">
           <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -112,7 +110,6 @@ const MenuPrincipal = ({ user: propUser }) => {
         </div>
       </nav>
 
-      {/* Side Drawer */}
       <div className={`side-drawer ${isMenuOpen ? 'open' : ''}`}>
         <div className="drawer-content">
           <div className="drawer-section">
@@ -123,11 +120,8 @@ const MenuPrincipal = ({ user: propUser }) => {
         </div>
       </div>
 
-      {/* Estructura dividida 50/50 */}
       <main className="main-content">
         <div className="dashboard-container">
-          
-          {/* COLUMNA IZQUIERDA: Módulos tradicionales */}
           <section className="panel-modulos">
             <div className="menu-grid">
               {opcionesPermitidas.map((opcion, index) => (
@@ -142,7 +136,6 @@ const MenuPrincipal = ({ user: propUser }) => {
             </div>
           </section>
 
-          {/* COLUMNA DERECHA: Personas en tiempo real */}
           <section className="panel-activos">
             <div className="activos-header">
               <h3>Visitantes en la Clínica ({visitasActivas.length})</h3>
@@ -159,11 +152,10 @@ const MenuPrincipal = ({ user: propUser }) => {
                       className="notificacion-foto" 
                     />
                     <div className="notificacion-info">
-                      <h4>{`${visita.nombres} ${visita.apellidos}`}</h4>
+                      <h4>{visita.visitante_completo}</h4>
                       <p>Destino: <span>{visita.area_destino}</span></p>
                     </div>
                     
-                    {/* Botón de control del Pop-over */}
                     <div className="popover-contenedor">
                       <button 
                         className="btn-opciones-pop"
@@ -172,7 +164,6 @@ const MenuPrincipal = ({ user: propUser }) => {
                         <MoreVertical size={20} />
                       </button>
 
-                      {/* Renderizado condicional del Pop-over exacto */}
                       {popOverActivo === visita.id_visita && (
                         <div className="popover-menu">
                           <button 
@@ -189,7 +180,6 @@ const MenuPrincipal = ({ user: propUser }) => {
               )}
             </div>
           </section>
-
         </div>
       </main>
 

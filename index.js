@@ -5,9 +5,24 @@ const visitanteRoutes = require('./src/routes/visitanteRoutes');
 const visitaRoutes = require('./src/routes/visitaRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const configRoutes = require('./src/routes/configRoutes');
+const pacienteRoutes = require('./src/routes/pacienteRoutes'); // <--- IMPORTACIÓN DE PACIENTES
+const controlCamasRoutes = require('./src/routes/controlCamasRoutes');
+const egresosRoutes = require('./src/routes/egresosRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const cron = require('node-cron');
+const { sincronizarOcupacionCamas } = require('./src/services/syncCamasService');
+
+// Sincronizar inmediatamente al arrancar el servidor
+sincronizarOcupacionCamas();
+
+// Programar sincronización automática cada 2 minutos
+cron.schedule('*/2 * * * *', () => {
+  console.log('[Cron Job] Ejecutando sincronización automática con Dinámica...');
+  sincronizarOcupacionCamas();
+});
 
 // MIDDLEWARES
 app.use(cors()); // 3. ACTIVACION DE CORS
@@ -19,6 +34,10 @@ app.use('/api/visitantes', visitanteRoutes);
 app.use('/api/visitas', visitaRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/config', configRoutes);
+app.use('/api/pacientes', pacienteRoutes); // <--- REGISTRO DE LA RUTA PACIENTES
+app.use('/api/control-camas', controlCamasRoutes);
+app.use('/api/egresos', egresosRoutes);
+
 // Ruta de prueba inicial
 app.get('/', (req, res) => {
     res.send('Servidor de la Clínica Meta funcionando correctamente 🏥');

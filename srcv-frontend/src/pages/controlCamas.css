@@ -1,0 +1,396 @@
+/* Layout Principal */
+.control-camas-layout {
+  min-height: 100vh;
+  width: 100%;
+  padding-bottom: 40px;
+  box-sizing: border-box;
+}
+
+.control-camas-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+/* Header Flotante Glassmorphism */
+.control-camas-header {
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 20px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.header-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+}
+
+.btn-volver {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-volver:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(-3px);
+}
+
+.header-title-group {
+  flex: 1;
+}
+
+.header-title-group h2 {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.header-title-group .subtitle {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin: 4px 0 0 0;
+}
+
+/* Métricas en Header */
+.metrics-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.metric-chip {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 120px;
+}
+
+.metric-chip .icon-blue { color: #38bdf8; }
+.metric-chip .icon-green { color: #4ade80; }
+.metric-chip .icon-amber { color: #fbbf24; }
+
+.metric-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-val {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.metric-lbl {
+  color: #94a3b8;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 3px;
+}
+
+/* Barra de Búsqueda e Inputs */
+.filtro-bar {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.search-input-wrapper, .select-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 0 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.search-input-wrapper {
+  flex: 1;
+}
+
+.search-icon, .filter-icon {
+  color: #64748b;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.search-input-wrapper input {
+  width: 100%;
+  border: none;
+  padding: 12px 0;
+  outline: none;
+  font-size: 0.95rem;
+  color: #0f172a;
+  background: transparent;
+}
+
+.select-input-wrapper select {
+  border: none;
+  padding: 12px 10px 12px 0;
+  outline: none;
+  font-size: 0.95rem;
+  color: #0f172a;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* Grid de Camas */
+.camas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px;
+}
+
+/* Tarjeta Cama */
+.cama-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cama-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.25);
+}
+
+.cama-card.cama-llena {
+  border-top: 5px solid #ef4444;
+}
+
+.cama-card.cama-disponible {
+  border-top: 5px solid #10b981;
+}
+
+.cama-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge-cama {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 0.95rem;
+  background: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.badge-cupo {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cupo-ok {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.cupo-lleno {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background-color: #f1f5f9;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 10px;
+}
+
+.fill-ok { background-color: #10b981; }
+.fill-lleno { background-color: #ef4444; }
+
+.paciente-info h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.area-badge {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #0284c7;
+  background: #e0f2fe;
+  padding: 2px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.visitantes-seccion {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.visitantes-titulo {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+}
+
+.visitantes-dento-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mini-visitante-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f8fafc;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #f1f5f9;
+}
+
+.avatar-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.visitante-detalles {
+  display: flex;
+  flex-direction: column;
+}
+
+.visitante-detalles strong {
+  font-size: 0.85rem;
+  color: #1e293b;
+}
+
+.rol-tag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.tag-acomp { background: #fef3c7; color: #b45309; }
+.tag-visita { background: #e0e7ff; color: #4338ca; }
+
+.sin-visitas {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  font-style: italic;
+  text-align: center;
+  padding: 8px 0;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.sin-resultados-card {
+  grid-column: 1 / -1;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 50px 20px;
+  text-align: center;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Responsivo Control Camas */
+@media (max-width: 1024px) {
+  .control-camas-header {
+    padding: 16px 20px;
+  }
+  
+  .header-top-bar {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .metrics-bar {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .metric-chip {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .control-camas-content {
+    padding: 0 16px;
+  }
+
+  .filtro-bar {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .camas-grid {
+    grid-template-columns: 1fr;
+  }
+}

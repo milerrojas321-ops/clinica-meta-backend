@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Importaciones
 import Login from './pages/Login';
 import MenuPrincipal from './pages/MenuPrincipal';
 import Perfil from './pages/Perfil';
@@ -10,7 +9,9 @@ import RegistroIngreso from './pages/RegistroIngreso';
 import HistorialVisitas from './pages/HistorialVisitas';
 import GestionVisitantes from './pages/GestionVisitantes';
 import RegistroUsuarios from './pages/RegistroUsuarios';
-import ProtectedRoute from './components/ProtectedRoute'; // Verifica que la carpeta sea 'components'
+import ControlCamas from './pages/controlCamas';
+import Egresos from './pages/Egresos';
+import ProtectedRoute from './components/ProtectedRoute';
 
 import axios from 'axios';
 
@@ -26,9 +27,9 @@ axios.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem('tokenClinica'); // ESTO ES CLAVE
+      localStorage.removeItem('tokenClinica');
       localStorage.removeItem('usuarioClinica');
-      window.location.href = '/'; // Opcional: Forzar salida
+      window.location.href = '/';
     }
     return Promise.reject(error);
   }
@@ -43,10 +44,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Ruta pública */}
         <Route path="/" element={<Login onLoginSuccess={(u) => setUsuarioLogueado(u)} />} />
 
-        {/* Rutas Protegidas para AMBOS roles */}
         <Route path="/inicio" element={
           <ProtectedRoute user={usuarioLogueado} allowedRoles={['administrador', 'recepcionista']}>
             <MenuPrincipal user={usuarioLogueado} />
@@ -54,6 +53,12 @@ function App() {
         } />
 
         <Route path="/Perfil" element={<Perfil />} />
+
+        <Route path="/control-camas" element={
+          <ProtectedRoute user={usuarioLogueado} allowedRoles={['administrador', 'recepcionista']}>
+            <ControlCamas />
+          </ProtectedRoute>
+        } />
 
         <Route path="/registro-ingreso" element={
           <ProtectedRoute user={usuarioLogueado} allowedRoles={['administrador', 'recepcionista']}>
@@ -73,10 +78,15 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* Ruta Protegida SOLO para Administrador */}
         <Route path="/registro-usuarios" element={
           <ProtectedRoute user={usuarioLogueado} allowedRoles={['administrador']}>
             <RegistroUsuarios />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/egresos" element={
+          <ProtectedRoute user={usuarioLogueado} allowedRoles={['administrador', 'recepcionista']}>
+            <Egresos />
           </ProtectedRoute>
         } />
 

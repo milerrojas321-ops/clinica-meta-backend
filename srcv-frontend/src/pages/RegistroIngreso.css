@@ -11,11 +11,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px;
+  padding: 40px 20px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed; /* Mantiene el fondo quieto al hacer scroll */
+  background-attachment: fixed;
+  box-sizing: border-box;
 }
 
 .ingreso-card {
@@ -34,14 +35,12 @@
   align-items: flex-start;
   margin-bottom: 35px;
   padding-bottom: 20px;
-
-  /* 🌟 EFECTO DE GRADIENTE EN EL BORDE INFERIOR: */
-  border-bottom: 2px solid transparent; /* 1. Creamos el grosor base (cambiado a 2px para que luzca más el color) */
-  border-image: linear-gradient(to right,#00b3ff, #004cd0, #00b3ff); /* 2. Transición de Azul a Rosa de izquierda a derecha */
-  border-image-slice: 1; /* 3. Obliga al navegador a renderizar el corte del degradado correctamente */
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(to right, #00b3ff, #004cd0, #00b3ff);
+  border-image-slice: 1;
 }
 
-.title-group h1 { color: #eef5ff; font-size: 2.5rem; }
+.title-group h1 { color: #eef5ff; font-size: 2.2rem; }
 .title-group p { color: #aecbf5; font-size: 0.95rem; }
 
 /* Grid principal */
@@ -58,26 +57,6 @@
   margin-bottom: 20px;
 }
 
-.input-group input, 
-.input-group select {
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid #efe2f0;
-  background: #f8fafc; /* Color de fondo claro */
-  outline: none;
-  transition: all 0.3s;
-  
-  /* ESTO CORRIGE EL TEXTO INVISIBLE */
-  color: #1e293b; /* Un azul oscuro casi negro para máxima legibilidad */
-  font-size: 1rem;
-}
-
-.input-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
 .input-group label {
   font-size: 0.85rem;
   font-weight: 600;
@@ -87,13 +66,23 @@
   gap: 8px;
 }
 
-.input-group input, .input-group select {
+.input-group input, 
+.input-group select {
   padding: 14px;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #efe2f0;
   background: #f8fafc;
   outline: none;
   transition: all 0.3s;
+  color: #1e293b;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
 .input-group input:focus {
@@ -102,7 +91,7 @@
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
 }
 
-/* Sección Cámara */
+/* Cámara */
 .camera-wrapper {
   background: #f8fafc;
   border-radius: 20px;
@@ -122,15 +111,27 @@
   object-fit: cover;
 }
 
-.btn-capture {
+.btn-capture, .btn-retake {
   width: 100%;
-  background: #1e293b;
-  color: white;
   padding: 14px;
   border-radius: 12px;
   border: none;
   cursor: pointer;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-capture {
+  background: #1e293b;
+  color: white;
+}
+
+.btn-retake {
+  background: #3b82f6;
+  color: white;
 }
 
 .btn-confirm {
@@ -150,26 +151,269 @@
 .ingreso-footer {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 35px;
-  padding-bottom: 20px;
-
-  /* 🌟 EFECTO DE GRADIENTE EN EL BORDE INFERIOR: */
-  border-bottom: 2px solid transparent; /* 1. Creamos el grosor base (cambiado a 2px para que luzca más el color) */
-  border-image: linear-gradient(to right,#00b3ff, #004cd0, #00b3ff); /* 2. Transición de Azul a Rosa de izquierda a derecha */
-  border-image-slice: 1; /* 3. Obliga al navegador a renderizar el corte del degradado correctamente */
+  align-items: center;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 2px solid transparent;
+  border-image: linear-gradient(to right, #00b3ff, #004cd0, #00b3ff);
+  border-image-slice: 1;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
 .btn-cancel {
-  background: none;
-  border: 1px solid #e2e8f0;
+  background: rgb(0, 55, 174);
+  border: 1px solid #a8cdff;
   padding: 14px 25px;
   border-radius: 12px;
   cursor: pointer;
-  color: #64748b;
+  color: #b4d3ff;
 }
 
+/* Menú desplegable de resultados */
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #0d1b40;
+  border: 1px solid #1e3a8a;
+  border-radius: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.search-result-item {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+  gap: 12px;
+}
+
+.search-result-item:hover {
+  background: rgba(0, 179, 255, 0.12);
+}
+
+.search-result-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.search-result-item strong {
+  color: #f8fafc;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.search-result-item small {
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+.status-badge {
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-ok { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+.badge-alert { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+/* Avisos */
+.photo-status-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.alert-warning { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+.alert-success { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+/* Paciente seleccionado */
+.paciente-selected-card {
+  background: rgb(0, 83, 179);
+  border: 1px solid #001d45;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: -10px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #e2e8f0;
+  gap: 10px;
+}
+
+.paciente-meta {
+  display: flex;
+  gap: 15px;
+  font-size: 0.85rem;
+  color: #89c0ff;
+  margin-top: 4px;
+}
+
+.btn-clear-paciente {
+  background: rgb(0, 121, 234);
+  color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Relevo */
+.relevo-alert-box {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  color: #fef3c7;
+}
+
+.relevo-alert-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f59e0b;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+/* Selector Tipo de Visita */
+.tipo-visita-selector {
+  background: rgba(13, 27, 64, 0.7);
+  border: 1px solid #1e3a8a;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-container input {
+  display: none;
+}
+
+.checkmark {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #3b82f6;
+  border-radius: 6px;
+  display: inline-block;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #3b82f6;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.tipo-visita-text strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #60a5fa;
+  font-size: 0.95rem;
+}
+
+.tipo-visita-text small {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+/* --- MEDIA QUERIES --- */
+
+/* Tablets / Celulares Grandes (hasta 900px) */
 @media (max-width: 900px) {
-  .ingreso-grid { grid-template-columns: 1fr; }
-  .ingreso-card { padding: 25px; }
+  .ingreso-container {
+    padding: 15px 10px;
+  }
+
+  .ingreso-card {
+    padding: 20px;
+  }
+
+  .ingreso-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .title-group h1 {
+    font-size: 1.6rem;
+  }
+
+  .input-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .ingreso-footer {
+    flex-direction: column-reverse;
+  }
+
+  .btn-cancel, .btn-confirm {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Smart TVs / Pantallas Extra Grandes (>= 1600px) */
+@media (min-width: 1600px) {
+  .ingreso-card {
+    max-width: 1400px;
+    padding: 50px;
+  }
+
+  .title-group h1 {
+    font-size: 2.8rem;
+  }
+
+  .input-group label, .input-group input, .input-group select {
+    font-size: 1.1rem;
+  }
 }
